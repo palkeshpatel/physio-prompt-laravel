@@ -1,0 +1,1138 @@
+{
+	"info": {
+		"_postman_id": "physioprompt-api-collection",
+		"name": "PhysioPrompt API",
+		"description": "Complete API collection for PhysioPrompt Laravel application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+919876543210\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role_id\": 1,\n  \"referred_by\": \"REF12345\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "logout"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/user",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "user"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Assessments",
+			"item": [
+				{
+					"name": "List Assessments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Assessment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"assessment_id\", jsonData.assessment.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_type_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assessment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Assessment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"completed\",\n  \"clinical_impression\": \"Muscle strain\",\n  \"rehab_program\": \"Rest and physical therapy\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Assessment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subjective Assessment",
+			"item": [
+				{
+					"name": "Basic Patient Details",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"full_name\": \"John Doe\",\n  \"age\": 35,\n  \"gender\": \"Male\",\n  \"height\": 175.50,\n  \"weight\": 75.00,\n  \"dominance\": \"Right\",\n  \"occupation\": \"Software Engineer\",\n  \"activity_level\": \"Moderate\",\n  \"additional_info\": \"No additional info\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/basic-patient-details",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "basic-patient-details"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Chief Complaint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"chief_complaint\": \"Lower back pain for 2 weeks\",\n  \"onset\": \"Gradual\",\n  \"onset_date\": \"2024-01-15 10:00:00\",\n  \"symptoms\": [\"pain\", \"stiffness\"],\n  \"additional_info\": \"Pain worsens in the morning\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/chief-complaint",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "chief-complaint"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pain Characteristics",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"pain_location\": \"Lower back, L4-L5 region\",\n  \"pain_type\": \"Dull ache\",\n  \"pain_scale\": 6,\n  \"pain_pattern\": \"Constant\",\n  \"aggravating_factors\": \"Sitting for long periods\",\n  \"easing_factors\": \"Rest and heat therapy\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/pain-characteristics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "pain-characteristics"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "History Present Condition",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"duration\": \"2 weeks\",\n  \"progression\": \"Worsening\",\n  \"previous_episodes\": \"Similar episode 6 months ago\",\n  \"mechanism_injury\": \"Lifting heavy object\",\n  \"initial_treatment\": \"Rest and OTC painkillers\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/history-present-condition",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "history-present-condition"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Functional Limitations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"daily_activities\": \"Difficulty bending\",\n  \"work_activities\": \"Cannot sit for more than 30 minutes\",\n  \"recreational_activities\": \"Unable to play sports\",\n  \"sleep_disturbance\": \"Pain wakes up at night\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/functional-limitations",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "functional-limitations"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Red Flag Screening",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"red_flags\": [\"bowel_bladder\", \"numbness\"],\n  \"red_flag_present\": true,\n  \"red_flag_details\": \"Numbness in right leg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/red-flag-screening",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "red-flag-screening"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Yellow Flags",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"yellow_flags\": [\"fear_avoidance\", \"catastrophizing\"],\n  \"yellow_flag_present\": true,\n  \"yellow_flag_details\": \"Patient fears movement\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/yellow-flags",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "yellow-flags"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Medical History",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"past_medical_history\": \"Hypertension, Diabetes\",\n  \"surgeries\": \"Appendectomy 2010\",\n  \"medications\": \"Metformin, Lisinopril\",\n  \"allergies\": \"Penicillin\",\n  \"family_history\": \"Father had back problems\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/medical-history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "medical-history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lifestyle Social History",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"job_demands\": {\"physical\": \"low\", \"mental\": \"high\"},\n  \"work_hours\": \"40 hours/week\",\n  \"smoking\": \"Non-smoker\",\n  \"alcohol\": \"Occasional\",\n  \"exercise\": \"Gym 3 times/week\",\n  \"hobbies\": \"Reading, hiking\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/lifestyle-social-history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "lifestyle-social-history"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ICE Assessment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"ideas\": \"Thinks it's a muscle strain\",\n  \"concerns\": \"Worried about long-term disability\",\n  \"expectations\": \"Wants to return to work in 1 week\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/ice-assessment",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "ice-assessment"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Region Specific",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"region\": \"Lumbar\",\n  \"region_data\": {\n    \"specific_area\": \"L4-L5\",\n    \"radiation\": \"Right leg\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/region-specific",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "region-specific"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subjective Outcome Measures",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"outcome_measures\": [\"ODI\", \"NPRS\"],\n  \"scores\": {\n    \"ODI\": 45,\n    \"NPRS\": 6\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/subjective/outcome-measures",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "subjective", "outcome-measures"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Objective Assessment",
+			"item": [
+				{
+					"name": "Observations General Examination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"posture_data\": {\n    \"standing\": \"Slight forward lean\",\n    \"sitting\": \"Slouched\"\n  },\n  \"gait_observation\": {\n    \"pattern\": \"Antalgic\",\n    \"speed\": \"Reduced\"\n  },\n  \"visual_inspection\": \"Mild swelling noted\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/observations-general-examination",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "observations-general-examination"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Palpation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"tenderness\": {\n    \"L4\": \"Moderate\",\n    \"L5\": \"Mild\"\n  },\n  \"temperature\": \"Normal\",\n  \"swelling\": \"Mild\",\n  \"tissue_texture\": {\n    \"muscle\": \"Tight\",\n    \"skin\": \"Normal\"\n  },\n  \"crepitus\": \"None\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/palpation",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "palpation"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Range of Motion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"active_rom\": {\n    \"flexion\": 45,\n    \"extension\": 10\n  },\n  \"passive_rom\": {\n    \"flexion\": 50,\n    \"extension\": 15\n  },\n  \"pain_during_arom\": true,\n  \"pain_location_arom\": \"Lower back\",\n  \"end_feel\": \"Firm\",\n  \"comparison_other_side\": \"Reduced compared to left\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/range-of-motion",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "range-of-motion"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Muscle Strength",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"mmt_scores\": {\n    \"quadriceps\": \"4/5\",\n    \"hamstrings\": \"4/5\"\n  },\n  \"core_activation\": \"Fair\",\n  \"pain_on_resistance\": true,\n  \"pain_movement\": \"Extension\",\n  \"functional_tests\": {\n    \"squat\": \"Limited\",\n    \"single_leg_stand\": \"Unable\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/muscle-strength",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "muscle-strength"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Neurological Examination",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"sensation\": {\n    \"L4\": \"Intact\",\n    \"L5\": \"Reduced\"\n  },\n  \"reflexes\": {\n    \"patellar\": \"2+\",\n    \"achilles\": \"1+\"\n  },\n  \"myotomes\": {\n    \"L4\": \"4/5\",\n    \"L5\": \"3/5\"\n  },\n  \"neural_tension\": {\n    \"SLR\": \"Positive at 45 degrees\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/neurological-examination",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "neurological-examination"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Special Tests",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"cervical_tests\": {\n    \"spurling\": \"Negative\"\n  },\n  \"lumbar_tests\": {\n    \"slr\": \"Positive\",\n    \"femoral_stretch\": \"Negative\"\n  },\n  \"shoulder_tests\": {},\n  \"other_tests\": {\n    \"fabere\": \"Negative\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/special-tests",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "special-tests"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Functional Assessment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"functional_data\": {\n    \"sit_to_stand\": \"Limited\",\n    \"walking\": \"Antalgic\"\n  },\n  \"movement_quality\": \"Compensatory patterns noted\",\n  \"functional_scores\": {\n    \"TUG\": \"15 seconds\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/functional-assessment",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "functional-assessment"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Joint Mobility",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"joint_data\": {\n    \"L4-L5\": \"Hypomobile\",\n    \"L5-S1\": \"Normal\"\n  },\n  \"mobility_scores\": {\n    \"L4-L5\": \"2/5\",\n    \"L5-S1\": \"4/5\"\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/joint-mobility",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "joint-mobility"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Objective Outcome Measures",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"outcome_measures\": [\"ROM\", \"Strength\"],\n  \"scores\": {\n    \"ROM\": 45,\n    \"Strength\": 4\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/outcome-measures",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "outcome-measures"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Objective Red Flags",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"red_flags\": [\"cauda_equina\", \"fracture\"],\n  \"red_flag_present\": false,\n  \"red_flag_details\": \"None noted\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/assessments/objective/red-flags",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "assessments", "objective", "red-flags"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "Get Subscription Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/subscriptions/plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "subscriptions", "plans"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Subscription",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/subscriptions/current",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "subscriptions", "current"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subscribe to Plan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscription_plan_id\": 2,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/subscriptions/subscribe",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "subscriptions", "subscribe"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Usage",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/subscriptions/usage",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "subscriptions", "usage"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/admin/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "admin", "users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/physio/admin/users/active",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "admin", "users", "active"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subscription Plan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.00,\n  \"description\": \"Professional plan\",\n  \"features\": [\"Unlimited assessments\", \"All features\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/admin/plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "admin", "plans"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "assessment_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
+
