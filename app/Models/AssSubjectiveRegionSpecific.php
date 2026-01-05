@@ -29,3 +29,5 @@ class AssSubjectiveRegionSpecific extends Model
     }
 }
 
+
+

@@ -33,3 +33,5 @@ class AssObjectivePalpation extends Model
     }
 }
 
+
+

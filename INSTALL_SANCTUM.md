@@ -34,3 +34,5 @@ php artisan migrate
 
 Without Sanctum, the API authentication will not work.
 
+
+

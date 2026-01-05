@@ -31,3 +31,5 @@ class AssSubjectiveMedicalHistory extends Model
     }
 }
 
+
+

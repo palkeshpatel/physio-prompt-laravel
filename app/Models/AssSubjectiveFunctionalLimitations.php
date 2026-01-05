@@ -30,3 +30,5 @@ class AssSubjectiveFunctionalLimitations extends Model
     }
 }
 
+
+

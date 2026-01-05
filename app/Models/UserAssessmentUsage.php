@@ -24,3 +24,5 @@ class UserAssessmentUsage extends Model
     }
 }
 
+
+

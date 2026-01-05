@@ -32,3 +32,5 @@ class AssSubjectivePainCharacteristics extends Model
     }
 }
 
+
+

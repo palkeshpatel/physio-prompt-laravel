@@ -32,3 +32,5 @@ class AssessmentTypeSeeder extends Seeder
     }
 }
 
+
+

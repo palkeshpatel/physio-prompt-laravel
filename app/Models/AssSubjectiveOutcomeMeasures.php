@@ -30,3 +30,5 @@ class AssSubjectiveOutcomeMeasures extends Model
     }
 }
 
+
+

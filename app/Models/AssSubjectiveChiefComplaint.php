@@ -32,3 +32,5 @@ class AssSubjectiveChiefComplaint extends Model
     }
 }
 
+
+
