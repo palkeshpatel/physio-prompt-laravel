@@ -42,9 +42,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"const response = pm.response.json();",
+									"if (response.token) {",
+									"    pm.collectionVariables.set('auth_token', response.token);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -78,12 +78,18 @@
 				{
 					"name": "Logout",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Accept",
 								"value": "application/json"
@@ -100,12 +106,18 @@
 				{
 					"name": "Get Current User",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Accept",
 								"value": "application/json"
@@ -123,16 +135,22 @@
 		},
 		{
 			"name": "Assessments",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{auth_token}}",
+						"type": "string"
+					}
+				]
+			},
 			"item": [
 				{
 					"name": "List Assessments",
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Accept",
 								"value": "application/json"
@@ -166,10 +184,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -196,10 +210,6 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Accept",
 								"value": "application/json"
 							}
@@ -217,10 +227,6 @@
 					"request": {
 						"method": "PUT",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -248,10 +254,6 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Accept",
 								"value": "application/json"
 							}
@@ -274,10 +276,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -305,10 +303,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -334,10 +328,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -365,10 +355,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -394,10 +380,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -425,10 +407,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -454,10 +432,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -485,10 +459,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -514,10 +484,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -545,10 +511,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -575,10 +537,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -604,10 +562,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -640,10 +594,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -669,10 +619,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -700,10 +646,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -729,10 +671,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -760,10 +698,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -789,10 +723,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -820,10 +750,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -849,10 +775,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -880,10 +802,6 @@
 						"method": "POST",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Content-Type",
 								"value": "application/json"
 							},
@@ -908,16 +826,22 @@
 		},
 		{
 			"name": "Subscriptions",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{auth_token}}",
+						"type": "string"
+					}
+				]
+			},
 			"item": [
 				{
 					"name": "Get Subscription Plans",
 					"request": {
 						"method": "GET",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Accept",
 								"value": "application/json"
@@ -937,10 +861,6 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Accept",
 								"value": "application/json"
 							}
@@ -958,10 +878,6 @@
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -989,10 +905,6 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
 								"key": "Accept",
 								"value": "application/json"
 							}
@@ -1009,6 +921,16 @@
 		},
 		{
 			"name": "Admin",
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{admin_token}}",
+						"type": "string"
+					}
+				]
+			},
 			"item": [
 				{
 					"name": "Admin Login",
@@ -1017,9 +939,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"if (pm.response.code === 200) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"admin_token\", jsonData.token);",
+									"const response = pm.response.json();",
+									"if (response.token) {",
+									"    pm.collectionVariables.set('admin_token', response.token);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -1027,6 +949,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [
 							{
@@ -1053,12 +978,18 @@
 				{
 					"name": "Admin Logout",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{admin_token}}"
-							},
 							{
 								"key": "Accept",
 								"value": "application/json"
@@ -1078,10 +1009,6 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "Authorization",
-								"value": "Bearer {{admin_token}}"
-							},
-							{
 								"key": "Accept",
 								"value": "application/json"
 							}
@@ -1096,21 +1023,27 @@
 				},
 				{
 					"name": "Admins",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{admin_token}}",
+								"type": "string"
+							}
+						]
+					},
 					"item": [
 						{
 							"name": "Get All Admins",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/admins?search=",
 									"host": ["{{base_url}}"],
@@ -1130,20 +1063,16 @@
 							"name": "Create Admin",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"newadmin@example.com\",\n  \"phone\": \"+919876543213\",\n  \"password\": \"admin123456\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
@@ -1160,16 +1089,12 @@
 							"name": "Get Admin by ID",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/admins/1",
 									"host": ["{{base_url}}"],
@@ -1182,20 +1107,16 @@
 							"name": "Update Admin",
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Updated Admin Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543214\",\n  \"password\": \"newpassword123\",\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
@@ -1212,16 +1133,12 @@
 							"name": "Delete Admin",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/admins/1",
 									"host": ["{{base_url}}"],
@@ -1234,21 +1151,27 @@
 				},
 				{
 					"name": "Users",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{admin_token}}",
+								"type": "string"
+							}
+						]
+					},
 					"item": [
 						{
 							"name": "Get All Users",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/users?search=&role_id=",
 									"host": ["{{base_url}}"],
@@ -1273,20 +1196,16 @@
 							"name": "Create User",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"phone\": \"+919876543215\",\n  \"password\": \"password123\",\n  \"role_id\": 1,\n  \"referral_code\": \"REF12345\",\n  \"referred_by\": \"REF12344\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
@@ -1303,16 +1222,12 @@
 							"name": "Get User by ID",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/users/1",
 									"host": ["{{base_url}}"],
@@ -1325,20 +1240,16 @@
 							"name": "Update User",
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Updated User Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543216\",\n  \"password\": \"newpassword123\",\n  \"role_id\": 1,\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
@@ -1355,16 +1266,12 @@
 							"name": "Delete User",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/users/1",
 									"host": ["{{base_url}}"],
@@ -1377,20 +1284,16 @@
 							"name": "Reset User Password",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
@@ -1407,21 +1310,27 @@
 				},
 				{
 					"name": "Subscription Plans",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{admin_token}}",
+								"type": "string"
+							}
+						]
+					},
 					"item": [
 						{
 							"name": "Get All Subscription Plans",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/subscription-plans?search=&is_active=",
 									"host": ["{{base_url}}"],
@@ -1446,20 +1355,16 @@
 							"name": "Create Subscription Plan",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.0,\n  \"original_price\": 2499.0,\n  \"discounted_price\": 1999.0,\n  \"description\": \"Professional plan with all features\",\n  \"features\": [\"Unlimited assessments\", \"All features\", \"Priority support\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
@@ -1476,16 +1381,12 @@
 							"name": "Get Subscription Plan by ID",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/subscription-plans/1",
 									"host": ["{{base_url}}"],
@@ -1498,20 +1399,16 @@
 							"name": "Update Subscription Plan",
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"name\": \"Updated Pro Plan\",\n  \"price\": 1799.0,\n  \"is_active\": true\n}"
@@ -1528,16 +1425,12 @@
 							"name": "Delete Subscription Plan",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/subscription-plans/1",
 									"host": ["{{base_url}}"],
@@ -1550,21 +1443,27 @@
 				},
 				{
 					"name": "User Subscriptions",
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "{{admin_token}}",
+								"type": "string"
+							}
+						]
+					},
 					"item": [
 						{
 							"name": "Get All User Subscriptions",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/user-subscriptions?search=&status=&user_id=",
 									"host": ["{{base_url}}"],
@@ -1594,20 +1493,16 @@
 							"name": "Create User Subscription",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"user_id\": 1,\n  \"subscription_plan_id\": 2,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-02-01\",\n  \"status\": \"active\",\n  \"assessment_of_month\": 100,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.0\n}"
@@ -1624,16 +1519,12 @@
 							"name": "Get User Subscription by ID",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
 									"host": ["{{base_url}}"],
@@ -1646,20 +1537,16 @@
 							"name": "Update User Subscription",
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n  \"status\": \"cancelled\",\n  \"end_date\": \"2024-01-15\"\n}"
@@ -1676,16 +1563,12 @@
 							"name": "Delete User Subscription",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{admin_token}}"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
 								"url": {
 									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
 									"host": ["{{base_url}}"],
