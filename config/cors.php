@@ -21,13 +21,13 @@ return [
 
     // For development, allow all origins
     'allowed_origins' => ['*'],
-    
+
     // For production, specify exact origins:
-    // 'allowed_origins' => [
-    //     'http://localhost:3000',
-    //     'http://127.0.0.1:3000',
-    //     'https://yourdomain.com',
-    // ],
+    'allowed_origins' => [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        // 'https://yourdomain.com',
+    ],
 
     'allowed_origins_patterns' => [],
 
@@ -42,4 +42,3 @@ return [
     'supports_credentials' => false,
 
 ];
-
