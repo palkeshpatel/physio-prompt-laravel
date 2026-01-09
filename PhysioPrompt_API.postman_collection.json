@@ -1020,7 +1020,6 @@
 									"if (pm.response.code === 200) {",
 									"    var jsonData = pm.response.json();",
 									"    pm.environment.set(\"admin_token\", jsonData.token);",
-									"    pm.environment.set(\"auth_token\", jsonData.token);",
 									"}"
 								],
 								"type": "text/javascript"
@@ -1105,7 +1104,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1134,7 +1133,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1164,7 +1163,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1186,7 +1185,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1216,7 +1215,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1243,7 +1242,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1277,7 +1276,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1307,7 +1306,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1329,7 +1328,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1359,7 +1358,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1381,7 +1380,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1416,7 +1415,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1450,7 +1449,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1480,7 +1479,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1502,7 +1501,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1532,7 +1531,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1559,7 +1558,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1598,7 +1597,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1628,7 +1627,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1650,7 +1649,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1680,7 +1679,7 @@
 								"header": [
 									{
 										"key": "Authorization",
-										"value": "Bearer {{auth_token}}"
+										"value": "Bearer {{admin_token}}"
 									},
 									{
 										"key": "Accept",
@@ -1708,6 +1707,11 @@
 		},
 		{
 			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
 			"value": "",
 			"type": "string"
 		},
