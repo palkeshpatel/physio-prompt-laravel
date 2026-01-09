@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'physio' => \App\Http\Middleware\EnsurePhysio::class,
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
+        
+        // CORS is handled automatically by Laravel when config/cors.php exists
+        // No need to manually register HandleCors middleware
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
