@@ -74,6 +74,9 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'logout']);
         Route::get('/me', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'admin']);
 
+        // Dashboard stats
+        Route::get('/dashboard/stats', [App\Http\Controllers\Api\Physio\DashboardController::class, 'stats']);
+
         // Admin CRUD
         Route::prefix('admins')->group(function () {
             Route::get('/', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'index']);
@@ -81,6 +84,7 @@ Route::prefix('admin')->group(function () {
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'show']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'update']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'destroy']);
+            Route::post('/{id}/reset-password', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'resetPassword']);
         });
 
         // User CRUD + Password Reset

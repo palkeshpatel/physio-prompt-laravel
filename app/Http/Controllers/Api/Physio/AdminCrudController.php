@@ -110,5 +110,24 @@ class AdminCrudController extends Controller
             'message' => 'Admin deleted successfully',
         ]);
     }
+
+    /**
+     * Reset admin password.
+     */
+    public function resetPassword(Request $request, $id)
+    {
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $admin = Admin::findOrFail($id);
+        $admin->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Password reset successfully',
+        ]);
+    }
 }
 

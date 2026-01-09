@@ -1012,6 +1012,25 @@
 					"response": []
 				},
 				{
+					"name": "Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/dashboard/stats",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "dashboard", "stats"]
+						},
+						"description": "Get dashboard statistics including counts of admins, users, plans, and subscriptions"
+					},
+					"response": []
+				},
+				{
 					"name": "Admins",
 					"item": [
 						{
