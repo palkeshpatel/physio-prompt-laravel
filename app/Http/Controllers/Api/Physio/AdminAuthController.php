@@ -36,7 +36,11 @@ class AdminAuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+
+        if ($user) {
+            $user->currentAccessToken()->delete();
+        }
 
         return response()->json([
             'message' => 'Admin logged out successfully',
@@ -50,4 +54,3 @@ class AdminAuthController extends Controller
         ]);
     }
 }
-

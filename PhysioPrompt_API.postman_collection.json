@@ -978,16 +978,6 @@
 				{
 					"name": "Admin Logout",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{admin_token}}",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [
 							{
@@ -1023,16 +1013,6 @@
 				},
 				{
 					"name": "Admins",
-					"auth": {
-						"type": "bearer",
-						"bearer": [
-							{
-								"key": "token",
-								"value": "{{admin_token}}",
-								"type": "string"
-							}
-						]
-					},
 					"item": [
 						{
 							"name": "Get All Admins",
@@ -1151,16 +1131,6 @@
 				},
 				{
 					"name": "Users",
-					"auth": {
-						"type": "bearer",
-						"bearer": [
-							{
-								"key": "token",
-								"value": "{{admin_token}}",
-								"type": "string"
-							}
-						]
-					},
 					"item": [
 						{
 							"name": "Get All Users",
@@ -1310,16 +1280,6 @@
 				},
 				{
 					"name": "Subscription Plans",
-					"auth": {
-						"type": "bearer",
-						"bearer": [
-							{
-								"key": "token",
-								"value": "{{admin_token}}",
-								"type": "string"
-							}
-						]
-					},
 					"item": [
 						{
 							"name": "Get All Subscription Plans",
@@ -1443,16 +1403,6 @@
 				},
 				{
 					"name": "User Subscriptions",
-					"auth": {
-						"type": "bearer",
-						"bearer": [
-							{
-								"key": "token",
-								"value": "{{admin_token}}",
-								"type": "string"
-							}
-						]
-					},
 					"item": [
 						{
 							"name": "Get All User Subscriptions",

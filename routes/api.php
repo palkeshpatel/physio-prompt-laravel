@@ -69,7 +69,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'login']);
 
     // Protected routes - require Admin authentication
-    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::middleware(['admin'])->group(function () {
         // Admin auth routes
         Route::post('/logout', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'logout']);
         Route::get('/me', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'admin']);
