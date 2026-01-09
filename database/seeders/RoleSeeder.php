@@ -15,11 +15,6 @@ class RoleSeeder extends Seeder
                 'slug' => 'doctor',
                 'description' => 'Healthcare professional who can create assessments',
             ],
-            [
-                'name' => 'Patient',
-                'slug' => 'patient',
-                'description' => 'Patient who can view their assessments',
-            ],
         ];
 
         foreach ($roles as $role) {

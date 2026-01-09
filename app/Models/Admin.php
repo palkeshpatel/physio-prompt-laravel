@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<\Database\Factories\AdminFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
@@ -26,9 +23,6 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'role_id',
-        'referral_code',
-        'referred_by',
         'avatar',
     ];
 
@@ -54,30 +48,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
-
-    public function subscriptions(): HasMany
-    {
-        return $this->hasMany(UserSubscription::class);
-    }
-
-    public function activeSubscription()
-    {
-        return $this->hasOne(UserSubscription::class)->where('status', 'active')
-            ->where('end_date', '>=', now());
-    }
-
-    public function assessmentUsage(): HasMany
-    {
-        return $this->hasMany(UserAssessmentUsage::class);
-    }
-
-    public function assessments(): HasMany
-    {
-        return $this->hasMany(Assessment::class);
-    }
 }
+

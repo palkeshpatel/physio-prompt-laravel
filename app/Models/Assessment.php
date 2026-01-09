@@ -144,10 +144,6 @@ class Assessment extends Model
         return $this->hasOne(AssObjectiveOutcomeMeasures::class);
     }
 
-    public function objectiveRedFlags(): HasOne
-    {
-        return $this->hasOne(AssObjectiveRedFlags::class);
-    }
 }
 
 

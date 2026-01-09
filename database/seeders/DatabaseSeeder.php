@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SubscriptionPlanSeeder::class,
             AssessmentTypeSeeder::class,
             UserSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

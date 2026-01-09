@@ -112,7 +112,6 @@ class AssessmentController extends Controller
                 'functionalAssessment',
                 'jointMobility',
                 'objectiveOutcomeMeasures',
-                'objectiveRedFlags',
             ])
             ->findOrFail($id);
 

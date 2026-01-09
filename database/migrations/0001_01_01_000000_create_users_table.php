@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('role_id')->nullable();
             $table->string('referral_code', 50)->unique()->nullable();
             $table->string('referred_by', 50)->nullable();
+            $table->string('avatar', 255)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

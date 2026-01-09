@@ -903,36 +903,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "Objective Red Flags",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"red_flags\": [\"cauda_equina\", \"fracture\"],\n  \"red_flag_present\": false,\n  \"red_flag_details\": \"None noted\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/red-flags",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "red-flags"]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -1041,58 +1011,25 @@
 			"name": "Admin",
 			"item": [
 				{
-					"name": "Get All Users",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"admin_token\", jsonData.token);",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
 							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/admin/users",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "admin", "users"]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Active Users",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/admin/users/active",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "admin", "users", "active"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Subscription Plan",
+					],
 					"request": {
 						"method": "POST",
 						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{auth_token}}"
-							},
 							{
 								"key": "Content-Type",
 								"value": "application/json"
@@ -1104,15 +1041,661 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.00,\n  \"description\": \"Professional plan\",\n  \"features\": [\"Unlimited assessments\", \"All features\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
+							"raw": "{\n  \"email\": \"admin1@example.com\",\n  \"password\": \"admin123\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/physio/admin/plans",
+							"raw": "{{base_url}}/api/admin/login",
 							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "admin", "plans"]
+							"path": ["api", "admin", "login"]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Admin Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "logout"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Admin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admins",
+					"item": [
+						{
+							"name": "Get All Admins",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/admins?search=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "admins"],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"newadmin@example.com\",\n  \"phone\": \"+919876543213\",\n  \"password\": \"admin123456\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/admins",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "admins"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Admin by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/admins/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "admins", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Admin",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Updated Admin Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543214\",\n  \"password\": \"newpassword123\",\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/admins/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "admins", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Admin",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/admins/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "admins", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "Get All Users",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/users?search=&role_id=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users"],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "role_id",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"phone\": \"+919876543215\",\n  \"password\": \"password123\",\n  \"role_id\": 1,\n  \"referral_code\": \"REF12345\",\n  \"referred_by\": \"REF12344\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/users",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/users/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Updated User Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543216\",\n  \"password\": \"newpassword123\",\n  \"role_id\": 1,\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/users/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/users/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Reset User Password",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/users/1/reset-password",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "users", "1", "reset-password"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Subscription Plans",
+					"item": [
+						{
+							"name": "Get All Subscription Plans",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/subscription-plans?search=&is_active=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "subscription-plans"],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "is_active",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Subscription Plan",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.0,\n  \"original_price\": 2499.0,\n  \"discounted_price\": 1999.0,\n  \"description\": \"Professional plan with all features\",\n  \"features\": [\"Unlimited assessments\", \"All features\", \"Priority support\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/subscription-plans",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "subscription-plans"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Subscription Plan by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/subscription-plans/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "subscription-plans", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Subscription Plan",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Updated Pro Plan\",\n  \"price\": 1799.0,\n  \"is_active\": true\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/subscription-plans/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "subscription-plans", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Subscription Plan",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/subscription-plans/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "subscription-plans", "1"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "User Subscriptions",
+					"item": [
+						{
+							"name": "Get All User Subscriptions",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/user-subscriptions?search=&status=&user_id=",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "user-subscriptions"],
+									"query": [
+										{
+											"key": "search",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "user_id",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User Subscription",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 1,\n  \"subscription_plan_id\": 2,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-02-01\",\n  \"status\": \"active\",\n  \"assessment_of_month\": 100,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/user-subscriptions",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "user-subscriptions"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Subscription by ID",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "user-subscriptions", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User Subscription",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"status\": \"cancelled\",\n  \"end_date\": \"2024-01-15\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "user-subscriptions", "1"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User Subscription",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{auth_token}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "user-subscriptions", "1"]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}

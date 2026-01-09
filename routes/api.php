@@ -3,17 +3,18 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Physio Routes (User authentication)
 Route::prefix('physio')->group(function () {
     // Public routes
     Route::post('/register', [App\Http\Controllers\Api\Physio\AuthController::class, 'register']);
     Route::post('/login', [App\Http\Controllers\Api\Physio\AuthController::class, 'login']);
-    
-    // Protected routes
-    Route::middleware('auth:sanctum')->group(function () {
+
+    // Protected routes - require User authentication
+    Route::middleware(['auth:sanctum', 'physio'])->group(function () {
         // Auth routes
         Route::post('/logout', [App\Http\Controllers\Api\Physio\AuthController::class, 'logout']);
         Route::get('/user', [App\Http\Controllers\Api\Physio\AuthController::class, 'user']);
-        
+
         // Assessment routes
         Route::prefix('assessments')->group(function () {
             Route::get('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'index']);
@@ -21,7 +22,7 @@ Route::prefix('physio')->group(function () {
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'show']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'update']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'destroy']);
-            
+
             // Subjective assessment sections
             Route::prefix('subjective')->group(function () {
                 Route::post('/basic-patient-details', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'basicPatientDetails']);
@@ -37,7 +38,7 @@ Route::prefix('physio')->group(function () {
                 Route::post('/region-specific', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'regionSpecific']);
                 Route::post('/outcome-measures', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'outcomeMeasures']);
             });
-            
+
             // Objective assessment sections
             Route::prefix('objective')->group(function () {
                 Route::post('/observations-general-examination', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'observationsGeneralExamination']);
@@ -49,10 +50,9 @@ Route::prefix('physio')->group(function () {
                 Route::post('/functional-assessment', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'functionalAssessment']);
                 Route::post('/joint-mobility', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'jointMobility']);
                 Route::post('/outcome-measures', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'outcomeMeasures']);
-                Route::post('/red-flags', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'redFlags']);
             });
         });
-        
+
         // Subscription routes
         Route::prefix('subscriptions')->group(function () {
             Route::get('/plans', [App\Http\Controllers\Api\Physio\SubscriptionController::class, 'plans']);
@@ -61,14 +61,54 @@ Route::prefix('physio')->group(function () {
             Route::get('/usage', [App\Http\Controllers\Api\Physio\SubscriptionController::class, 'usage']);
         });
     });
-    
-    // Admin routes (not priority but included)
-    Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
-        Route::get('/users', [App\Http\Controllers\Api\Physio\AdminController::class, 'users']);
-        Route::get('/users/active', [App\Http\Controllers\Api\Physio\AdminController::class, 'activeUsers']);
-        Route::post('/plans', [App\Http\Controllers\Api\Physio\AdminController::class, 'createPlan']);
-    });
 });
 
+// Admin Routes (Admin authentication)
+Route::prefix('admin')->group(function () {
+    // Public routes
+    Route::post('/login', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'login']);
 
+    // Protected routes - require Admin authentication
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        // Admin auth routes
+        Route::post('/logout', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'logout']);
+        Route::get('/me', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'admin']);
 
+        // Admin CRUD
+        Route::prefix('admins')->group(function () {
+            Route::get('/', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'index']);
+            Route::post('/', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'store']);
+            Route::get('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'show']);
+            Route::put('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'update']);
+            Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AdminCrudController::class, 'destroy']);
+        });
+
+        // User CRUD + Password Reset
+        Route::prefix('users')->group(function () {
+            Route::get('/', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'index']);
+            Route::post('/', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'store']);
+            Route::get('/{id}', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'show']);
+            Route::put('/{id}', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'update']);
+            Route::delete('/{id}', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'destroy']);
+            Route::post('/{id}/reset-password', [App\Http\Controllers\Api\Physio\UserCrudController::class, 'resetPassword']);
+        });
+
+        // Subscription Plans CRUD
+        Route::prefix('subscription-plans')->group(function () {
+            Route::get('/', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'indexPlans']);
+            Route::post('/', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'storePlan']);
+            Route::get('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'showPlan']);
+            Route::put('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'updatePlan']);
+            Route::delete('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'destroyPlan']);
+        });
+
+        // User Subscriptions CRUD
+        Route::prefix('user-subscriptions')->group(function () {
+            Route::get('/', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'indexSubscriptions']);
+            Route::post('/', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'storeSubscription']);
+            Route::get('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'showSubscription']);
+            Route::put('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'updateSubscription']);
+            Route::delete('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'destroySubscription']);
+        });
+    });
+});

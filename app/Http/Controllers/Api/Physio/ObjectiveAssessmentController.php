@@ -230,29 +230,6 @@ class ObjectiveAssessmentController extends Controller
         ]);
     }
 
-    public function redFlags(Request $request)
-    {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->objectiveRedFlags()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
-
-        $this->updateCompletionPercentage($assessment, 'objective');
-
-        return response()->json([
-            'message' => 'Red flags saved successfully',
-            'data' => $section,
-        ]);
-    }
 
     private function updateCompletionPercentage($assessment, $type)
     {
@@ -267,7 +244,6 @@ class ObjectiveAssessmentController extends Controller
                 $assessment->functionalAssessment,
                 $assessment->jointMobility,
                 $assessment->objectiveOutcomeMeasures,
-                $assessment->objectiveRedFlags,
             ];
 
             $totalPercentage = 0;
@@ -279,7 +255,7 @@ class ObjectiveAssessmentController extends Controller
                 }
             }
 
-            $average = $count > 0 ? $totalPercentage / 10 : 0;
+            $average = $count > 0 ? $totalPercentage / 9 : 0;
             $finalPercentage = $average * 1.00; // 100% weight
 
             $assessment->update(['completion_percentage' => round($finalPercentage, 2)]);
