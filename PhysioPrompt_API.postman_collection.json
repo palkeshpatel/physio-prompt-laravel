@@ -1031,6 +1031,33 @@
 					"response": []
 				},
 				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"old_password\": \"currentpassword123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/change-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "change-password"]
+						},
+						"description": "Change password for the authenticated admin. Requires old password, new password, and password confirmation."
+					},
+					"response": []
+				},
+				{
 					"name": "Admins",
 					"item": [
 						{

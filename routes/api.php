@@ -73,6 +73,7 @@ Route::prefix('admin')->group(function () {
         // Admin auth routes
         Route::post('/logout', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'logout']);
         Route::get('/me', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'admin']);
+        Route::post('/change-password', [App\Http\Controllers\Api\Physio\AdminAuthController::class, 'changePassword']);
 
         // Dashboard stats
         Route::get('/dashboard/stats', [App\Http\Controllers\Api\Physio\DashboardController::class, 'stats']);

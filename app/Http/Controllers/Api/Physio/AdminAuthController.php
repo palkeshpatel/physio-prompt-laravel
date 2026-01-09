@@ -53,4 +53,33 @@ class AdminAuthController extends Controller
             'admin' => $request->user(),
         ]);
     }
+
+    /**
+     * Change password for the authenticated admin.
+     */
+    public function changePassword(Request $request)
+    {
+        $admin = $request->user();
+
+        $request->validate([
+            'old_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Verify old password
+        if (!Hash::check($request->old_password, $admin->password)) {
+            return response()->json([
+                'message' => 'The old password is incorrect.',
+            ], 422);
+        }
+
+        // Update password
+        $admin->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return response()->json([
+            'message' => 'Password changed successfully',
+        ]);
+    }
 }
