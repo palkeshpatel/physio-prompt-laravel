@@ -7,6 +7,33 @@
 	},
 	"item": [
 		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Get Public Settings",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/settings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "settings"]
+						},
+						"description": "Get public application settings and statistics for home page. No authentication required."
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Authentication",
 			"item": [
 				{
@@ -1056,6 +1083,130 @@
 						"description": "Change password for the authenticated admin. Requires old password, new password, and password confirmation."
 					},
 					"response": []
+				},
+				{
+					"name": "Settings",
+					"item": [
+						{
+							"name": "Get Settings",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/settings",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "settings"]
+								},
+								"description": "Get application settings (logo, app_name, app_details)"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Settings",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"logo\": \"/images/logo.svg\",\n  \"app_name\": \"PHYSIOPROMPT\",\n  \"app_details\": \"Excellence Through Intelligence\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/settings",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "settings"]
+								},
+								"description": "Update application settings. app_name is required, logo and app_details are optional."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/admin/settings/statistics",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "settings", "statistics"]
+								},
+								"description": "Get all statistics (patients, clinics, countries, years) with icon, title, and count"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Statistics (Bulk)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"statistics\": [\n    {\n      \"id\": 1,\n      \"icon\": \"Users\",\n      \"title\": \"Patients\",\n      \"count\": \"2,500+\",\n      \"sort_order\": 1\n    },\n    {\n      \"id\": 2,\n      \"icon\": \"Building2\",\n      \"title\": \"Clinics\",\n      \"count\": \"50+\",\n      \"sort_order\": 2\n    },\n    {\n      \"id\": 3,\n      \"icon\": \"Globe\",\n      \"title\": \"Countries\",\n      \"count\": \"12\",\n      \"sort_order\": 3\n    },\n    {\n      \"id\": 4,\n      \"icon\": \"Calendar\",\n      \"title\": \"Years\",\n      \"count\": \"10+\",\n      \"sort_order\": 4\n    }\n  ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/settings/statistics/bulk",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "settings", "statistics", "bulk"]
+								},
+								"description": "Bulk update statistics. Each statistic requires id, title, and count. icon and sort_order are optional."
+							},
+							"response": []
+						},
+						{
+							"name": "Update Single Statistic",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"icon\": \"Users\",\n  \"title\": \"Patients\",\n  \"count\": \"2,500+\",\n  \"sort_order\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/admin/settings/statistics/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "admin", "settings", "statistics", "1"]
+								},
+								"description": "Update a single statistic by ID. title and count are required, icon and sort_order are optional."
+							},
+							"response": []
+						}
+					]
 				},
 				{
 					"name": "Admins",

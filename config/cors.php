@@ -20,13 +20,11 @@ return [
     'allowed_methods' => ['*'],
 
     // For development, allow all origins
-    'allowed_origins' => ['*'],
-
-    // For production, specify exact origins:
     'allowed_origins' => [
         'http://localhost:3000',
         'http://127.0.0.1:3000',
-        // 'https://yourdomain.com',
+        '*', // Allow all for development
+        // 'https://yourdomain.com', // For production, specify exact origins
     ],
 
     'allowed_origins_patterns' => [],

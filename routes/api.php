@@ -3,6 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// Public routes (no auth required)
+Route::get('/settings', [App\Http\Controllers\Api\Physio\SettingsController::class, 'getPublic']);
+
 // Physio Routes (User authentication)
 Route::prefix('physio')->group(function () {
     // Public routes
@@ -114,6 +117,18 @@ Route::prefix('admin')->group(function () {
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'showSubscription']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'updateSubscription']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\SubscriptionCrudController::class, 'destroySubscription']);
+        });
+
+        // Settings Management
+        Route::prefix('settings')->group(function () {
+            Route::get('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'getSettings']);
+            Route::put('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'updateSettings']);
+            
+            Route::prefix('statistics')->group(function () {
+                Route::get('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'getStatistics']);
+                Route::put('/bulk', [App\Http\Controllers\Api\Physio\SettingsController::class, 'updateStatistics']);
+                Route::put('/{id}', [App\Http\Controllers\Api\Physio\SettingsController::class, 'updateStatistic']);
+            });
         });
     });
 });

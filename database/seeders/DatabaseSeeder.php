@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
             AssessmentTypeSeeder::class,
             UserSeeder::class,
             AdminSeeder::class,
+            AppSettingsSeeder::class,
+            AppStatisticsSeeder::class,
         ]);
     }
 }
