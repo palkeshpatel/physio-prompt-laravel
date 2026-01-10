@@ -98,7 +98,62 @@
 							"raw": "{{base_url}}/api/physio/login",
 							"host": ["{{base_url}}"],
 							"path": ["api", "physio", "login"]
-						}
+						},
+						"description": "User/Doctor login endpoint. Returns user data with role and subscription information, along with authentication token. Use this token in Authorization header for protected routes."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"doctor1@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/forgot-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "forgot-password"]
+						},
+						"description": "Request password reset link. Sends a password reset token to the user's email. In development, the reset link is returned in the response. In production, the link will be sent via email only."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"token\": \"reset_token_from_email\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/physio/reset-password",
+							"host": ["{{base_url}}"],
+							"path": ["api", "physio", "reset-password"]
+						},
+						"description": "Reset user password using the token received via email. The token is valid for 24 hours. After successful reset, the user can login with the new password."
 					},
 					"response": []
 				},

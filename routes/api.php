@@ -11,6 +11,8 @@ Route::prefix('physio')->group(function () {
     // Public routes
     Route::post('/register', [App\Http\Controllers\Api\Physio\AuthController::class, 'register']);
     Route::post('/login', [App\Http\Controllers\Api\Physio\AuthController::class, 'login']);
+    Route::post('/forgot-password', [App\Http\Controllers\Api\Physio\AuthController::class, 'forgotPassword']);
+    Route::post('/reset-password', [App\Http\Controllers\Api\Physio\AuthController::class, 'resetPassword']);
 
     // Protected routes - require User authentication
     Route::middleware(['auth:sanctum', 'physio'])->group(function () {
@@ -123,7 +125,7 @@ Route::prefix('admin')->group(function () {
         Route::prefix('settings')->group(function () {
             Route::get('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'getSettings']);
             Route::put('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'updateSettings']);
-            
+
             Route::prefix('statistics')->group(function () {
                 Route::get('/', [App\Http\Controllers\Api\Physio\SettingsController::class, 'getStatistics']);
                 Route::put('/bulk', [App\Http\Controllers\Api\Physio\SettingsController::class, 'updateStatistics']);
