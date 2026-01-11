@@ -28,20 +28,20 @@ Route::prefix('physio')->group(function () {
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'update']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'destroy']);
 
-            // Subjective assessment sections
+            // Subjective assessment sections (PUT method - creates if doesn't exist, updates if exists)
             Route::prefix('subjective')->group(function () {
-                Route::post('/basic-patient-details', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'basicPatientDetails']);
-                Route::post('/chief-complaint', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'chiefComplaint']);
-                Route::post('/pain-characteristics', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'painCharacteristics']);
-                Route::post('/history-present-condition', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'historyPresentCondition']);
-                Route::post('/functional-limitations', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'functionalLimitations']);
-                Route::post('/red-flag-screening', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'redFlagScreening']);
-                Route::post('/yellow-flags', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'yellowFlags']);
-                Route::post('/medical-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'medicalHistory']);
-                Route::post('/lifestyle-social-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'lifestyleSocialHistory']);
-                Route::post('/ice-assessment', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'iceAssessment']);
-                Route::post('/region-specific', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'regionSpecific']);
-                Route::post('/outcome-measures', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'outcomeMeasures']);
+                Route::put('/basic-patient-details', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'basicPatientDetails']);
+                Route::put('/chief-complaint', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'chiefComplaint']);
+                Route::put('/pain-characteristics', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'painCharacteristics']);
+                Route::put('/history-present-condition', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'historyPresentCondition']);
+                Route::put('/functional-limitations', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'functionalLimitations']);
+                Route::put('/red-flag-screening', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'redFlagScreening']);
+                Route::put('/yellow-flags', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'yellowFlags']);
+                Route::put('/medical-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'medicalHistory']);
+                Route::put('/lifestyle-social-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'lifestyleSocialHistory']);
+                Route::put('/ice-assessment', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'iceAssessment']);
+                Route::put('/region-specific', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'regionSpecific']);
+                Route::put('/outcome-measures', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'outcomeMeasures']);
             });
 
             // Objective assessment sections

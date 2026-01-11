@@ -14,6 +14,30 @@ class SubjectiveAssessmentController extends Controller
             ->findOrFail($assessmentId);
     }
 
+    /**
+     * Common fast PUT method to update section fields
+     * Creates entry if doesn't exist, updates if exists
+     * Can update one field at a time or multiple fields
+     */
+    private function updateOrCreateSection($assessment, $relationshipName, $data)
+    {
+        $relationship = $assessment->$relationshipName();
+
+        // Use updateOrCreate - creates if doesn't exist, updates if exists
+        $section = $relationship->updateOrCreate(
+            ['assessment_id' => $assessment->id],
+            $data
+        );
+
+        // Refresh to get updated data
+        $section->refresh();
+
+        return $section;
+    }
+
+    /**
+     * Common PUT method for Basic Patient Details
+     */
     public function basicPatientDetails(Request $request)
     {
         $request->validate([
@@ -21,15 +45,15 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
+
+        // Get all data except assessment_id
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->basicPatientDetails()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        // Update or create section
+        $section = $this->updateOrCreateSection($assessment, 'basicPatientDetails', $data);
+
+        // Update completion percentage
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -38,6 +62,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Chief Complaint
+     */
     public function chiefComplaint(Request $request)
     {
         $request->validate([
@@ -45,15 +72,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->chiefComplaint()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'chiefComplaint', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -62,6 +84,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Pain Characteristics
+     */
     public function painCharacteristics(Request $request)
     {
         $request->validate([
@@ -69,15 +94,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->painCharacteristics()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'painCharacteristics', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -86,6 +106,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for History of Present Condition
+     */
     public function historyPresentCondition(Request $request)
     {
         $request->validate([
@@ -93,15 +116,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->historyPresentCondition()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'historyPresentCondition', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -110,6 +128,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Functional Limitations
+     */
     public function functionalLimitations(Request $request)
     {
         $request->validate([
@@ -117,15 +138,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->functionalLimitations()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'functionalLimitations', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -134,6 +150,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Red Flag Screening
+     */
     public function redFlagScreening(Request $request)
     {
         $request->validate([
@@ -141,15 +160,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->redFlagScreening()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'redFlagScreening', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -158,6 +172,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Yellow Flags
+     */
     public function yellowFlags(Request $request)
     {
         $request->validate([
@@ -165,15 +182,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->yellowFlags()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'yellowFlags', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -182,6 +194,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Medical History
+     */
     public function medicalHistory(Request $request)
     {
         $request->validate([
@@ -189,15 +204,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->medicalHistory()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'medicalHistory', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -206,6 +216,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Lifestyle & Social History
+     */
     public function lifestyleSocialHistory(Request $request)
     {
         $request->validate([
@@ -213,15 +226,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->lifestyleSocialHistory()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'lifestyleSocialHistory', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -230,6 +238,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for ICE Assessment
+     */
     public function iceAssessment(Request $request)
     {
         $request->validate([
@@ -237,15 +248,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->iceAssessment()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'iceAssessment', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -254,6 +260,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Region Specific
+     */
     public function regionSpecific(Request $request)
     {
         $request->validate([
@@ -261,15 +270,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->regionSpecific()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'regionSpecific', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -278,6 +282,9 @@ class SubjectiveAssessmentController extends Controller
         ]);
     }
 
+    /**
+     * Common PUT method for Outcome Measures
+     */
     public function outcomeMeasures(Request $request)
     {
         $request->validate([
@@ -285,15 +292,10 @@ class SubjectiveAssessmentController extends Controller
         ]);
 
         $assessment = $this->getAssessment($request, $request->assessment_id);
-        
         $data = $request->except(['assessment_id']);
         $data['assessment_id'] = $assessment->id;
-        
-        $section = $assessment->subjectiveOutcomeMeasures()->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
 
+        $section = $this->updateOrCreateSection($assessment, 'subjectiveOutcomeMeasures', $data);
         $this->updateCompletionPercentage($assessment, 'subjective');
 
         return response()->json([
@@ -305,12 +307,29 @@ class SubjectiveAssessmentController extends Controller
     private function updateCompletionPercentage($assessment, $type)
     {
         if ($type === 'subjective') {
+            // Load all relationships
+            $assessment->load([
+                'basicPatientDetails',
+                'chiefComplaint',
+                'painCharacteristics',
+                'historyPresentCondition',
+                'functionalLimitations',
+                'redFlagScreening',
+                'yellowFlags',
+                'medicalHistory',
+                'lifestyleSocialHistory',
+                'iceAssessment',
+                'regionSpecific',
+                'subjectiveOutcomeMeasures',
+            ]);
+
             $sections = [
                 $assessment->basicPatientDetails,
                 $assessment->chiefComplaint,
                 $assessment->painCharacteristics,
                 $assessment->historyPresentCondition,
                 $assessment->functionalLimitations,
+                $assessment->redFlagScreening,
                 $assessment->yellowFlags,
                 $assessment->medicalHistory,
                 $assessment->lifestyleSocialHistory,
@@ -328,13 +347,11 @@ class SubjectiveAssessmentController extends Controller
                 }
             }
 
+            // There are 12 sections total for subjective assessment
             $average = $count > 0 ? $totalPercentage / 12 : 0;
-            $finalPercentage = $average * 0.20; // 20% weight
+            $finalPercentage = $average * 1.00; // 100% weight (each section contributes equally)
 
             $assessment->update(['completion_percentage' => round($finalPercentage, 2)]);
         }
     }
 }
-
-
-
