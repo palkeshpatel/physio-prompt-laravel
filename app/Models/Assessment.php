@@ -160,6 +160,8 @@ class Assessment extends Model
 
     /**
      * Get subjective completion percentage
+     * Counts sections that have been submitted (form/page completed, not individual fields)
+     * A section is considered completed if the JSON column exists and is an array
      */
     public function getSubjectivePercentage(): float
     {
@@ -180,16 +182,19 @@ class Assessment extends Model
 
         $completed = 0;
         foreach ($sections as $section) {
-            if ($this->$section !== null && !empty($this->$section)) {
+            // If section JSON column exists and is an array, it means the form was submitted
+            if ($this->$section !== null && is_array($this->$section)) {
                 $completed++;
             }
         }
 
-        return $completed > 0 ? ($completed / 12) * 100 : 0;
+        return ($completed / 12) * 100;
     }
 
     /**
      * Get objective completion percentage
+     * Counts sections that have been submitted (form/page completed, not individual fields)
+     * A section is considered completed if the JSON column exists and is an array
      */
     public function getObjectivePercentage(): float
     {
@@ -208,12 +213,13 @@ class Assessment extends Model
 
         $completed = 0;
         foreach ($sections as $section) {
-            if ($this->$section !== null && !empty($this->$section)) {
+            // If section JSON column exists and is an array, it means the form was submitted
+            if ($this->$section !== null && is_array($this->$section)) {
                 $completed++;
             }
         }
 
-        return $completed > 0 ? ($completed / 10) * 100 : 0;
+        return ($completed / 10) * 100;
     }
 
     /**
