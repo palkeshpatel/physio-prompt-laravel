@@ -24,40 +24,20 @@ Route::prefix('physio')->group(function () {
         Route::prefix('assessments')->group(function () {
             Route::get('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'index']);
             Route::get('/completion-status', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'checkCompletionStatus']);
+            Route::get('/check-drafts', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'checkDrafts']);
+            Route::get('/drafts', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'getDrafts']);
+            Route::get('/all', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'getAll']);
             Route::post('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'store']);
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'show']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'update']);
             Route::post('/{id}/complete', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'complete']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'destroy']);
 
-            // Subjective assessment sections (PUT method - creates if doesn't exist, updates if exists)
-            Route::prefix('subjective')->group(function () {
-                Route::put('/basic-patient-details', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'basicPatientDetails']);
-                Route::put('/chief-complaint', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'chiefComplaint']);
-                Route::put('/pain-characteristics', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'painCharacteristics']);
-                Route::put('/history-present-condition', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'historyPresentCondition']);
-                Route::put('/functional-limitations', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'functionalLimitations']);
-                Route::put('/red-flag-screening', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'redFlagScreening']);
-                Route::put('/yellow-flags', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'yellowFlags']);
-                Route::put('/medical-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'medicalHistory']);
-                Route::put('/lifestyle-social-history', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'lifestyleSocialHistory']);
-                Route::put('/ice-assessment', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'iceAssessment']);
-                Route::put('/region-specific', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'regionSpecific']);
-                Route::put('/outcome-measures', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'outcomeMeasures']);
-            });
+            // Unified Subjective assessment endpoint
+            Route::put('/subjective/section', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'updateSection']);
 
-            // Objective assessment sections
-            Route::prefix('objective')->group(function () {
-                Route::post('/observations-general-examination', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'observationsGeneralExamination']);
-                Route::post('/palpation', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'palpation']);
-                Route::post('/range-of-motion', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'rangeOfMotion']);
-                Route::post('/muscle-strength', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'muscleStrength']);
-                Route::post('/neurological-examination', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'neurologicalExamination']);
-                Route::post('/special-tests', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'specialTests']);
-                Route::post('/functional-assessment', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'functionalAssessment']);
-                Route::post('/joint-mobility', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'jointMobility']);
-                Route::post('/outcome-measures', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'outcomeMeasures']);
-            });
+            // Unified Objective assessment endpoint
+            Route::put('/objective/section', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'updateSection']);
         });
 
         // Subscription routes

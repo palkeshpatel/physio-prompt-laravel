@@ -1,1812 +1,1753 @@
 {
-	"info": {
-		"_postman_id": "physioprompt-api-collection",
-		"name": "PhysioPrompt API",
-		"description": "Complete API collection for PhysioPrompt Laravel application",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Public",
-			"item": [
-				{
-					"name": "Get Public Settings",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/settings",
-							"host": ["{{base_url}}"],
-							"path": ["api", "settings"]
-						},
-						"description": "Get public application settings and statistics for home page. No authentication required."
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Authentication",
-			"item": [
-				{
-					"name": "Register",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+919876543210\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role_id\": 1,\n  \"referred_by\": \"REF12345\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/register",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "register"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const response = pm.response.json();",
-									"if (response.token) {",
-									"    pm.collectionVariables.set('auth_token', response.token);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"password\": \"password123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/login",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "login"]
-						},
-						"description": "User/Doctor login endpoint. Returns user data with role and subscription information, along with authentication token. Use this token in Authorization header for protected routes."
-					},
-					"response": []
-				},
-				{
-					"name": "Forgot Password",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"doctor1@example.com\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/forgot-password",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "forgot-password"]
-						},
-						"description": "Request password reset link. Sends a password reset token to the user's email. In development, the reset link is returned in the response. In production, the link will be sent via email only."
-					},
-					"response": []
-				},
-				{
-					"name": "Reset Password",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"token\": \"reset_token_from_email\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/reset-password",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "reset-password"]
-						},
-						"description": "Reset user password using the token received via email. The token is valid for 24 hours. After successful reset, the user can login with the new password."
-					},
-					"response": []
-				},
-				{
-					"name": "Logout",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/logout",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "logout"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current User",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{auth_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/user",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "user"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Assessments",
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{auth_token}}",
-						"type": "string"
-					}
-				]
-			},
-			"item": [
-				{
-					"name": "List Assessments",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Assessment",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"if (pm.response.code === 201) {",
-									"    var jsonData = pm.response.json();",
-									"    pm.environment.set(\"assessment_id\", jsonData.assessment.id);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_type_id\": 1\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Assessment",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Assessment",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"status\": \"completed\",\n  \"clinical_impression\": \"Muscle strain\",\n  \"rehab_program\": \"Rest and physical therapy\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Assessment",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "{{assessment_id}}"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Subjective Assessment",
-			"item": [
-				{
-					"name": "Basic Patient Details",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"full_name\": \"John Doe\",\n  \"age\": 35,\n  \"gender\": \"Male\",\n  \"height\": 175.50,\n  \"weight\": 75.00,\n  \"dominance\": \"Right\",\n  \"occupation\": \"Software Engineer\",\n  \"activity_level\": \"Moderate\",\n  \"additional_info\": \"No additional info\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/basic-patient-details",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "basic-patient-details"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Chief Complaint",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"chief_complaint\": \"Lower back pain for 2 weeks\",\n  \"onset\": \"Gradual\",\n  \"onset_date\": \"2024-01-15 10:00:00\",\n  \"symptoms\": [\"pain\", \"stiffness\"],\n  \"additional_info\": \"Pain worsens in the morning\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/chief-complaint",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "chief-complaint"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Pain Characteristics",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"pain_location\": \"Lower back, L4-L5 region\",\n  \"pain_type\": \"Dull ache\",\n  \"pain_scale\": 6,\n  \"pain_pattern\": \"Constant\",\n  \"aggravating_factors\": \"Sitting for long periods\",\n  \"easing_factors\": \"Rest and heat therapy\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/pain-characteristics",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "pain-characteristics"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "History Present Condition",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"duration\": \"2 weeks\",\n  \"progression\": \"Worsening\",\n  \"previous_episodes\": \"Similar episode 6 months ago\",\n  \"mechanism_injury\": \"Lifting heavy object\",\n  \"initial_treatment\": \"Rest and OTC painkillers\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/history-present-condition",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "history-present-condition"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Functional Limitations",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"daily_activities\": \"Difficulty bending\",\n  \"work_activities\": \"Cannot sit for more than 30 minutes\",\n  \"recreational_activities\": \"Unable to play sports\",\n  \"sleep_disturbance\": \"Pain wakes up at night\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/functional-limitations",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "functional-limitations"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Red Flag Screening",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"red_flags\": [\"bowel_bladder\", \"numbness\"],\n  \"red_flag_present\": true,\n  \"red_flag_details\": \"Numbness in right leg\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/red-flag-screening",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "red-flag-screening"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Yellow Flags",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"yellow_flags\": [\"fear_avoidance\", \"catastrophizing\"],\n  \"yellow_flag_present\": true,\n  \"yellow_flag_details\": \"Patient fears movement\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/yellow-flags",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "yellow-flags"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Medical History",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"past_medical_history\": \"Hypertension, Diabetes\",\n  \"surgeries\": \"Appendectomy 2010\",\n  \"medications\": \"Metformin, Lisinopril\",\n  \"allergies\": \"Penicillin\",\n  \"family_history\": \"Father had back problems\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/medical-history",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "medical-history"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Lifestyle Social History",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"job_demands\": {\"physical\": \"low\", \"mental\": \"high\"},\n  \"work_hours\": \"40 hours/week\",\n  \"smoking\": \"Non-smoker\",\n  \"alcohol\": \"Occasional\",\n  \"exercise\": \"Gym 3 times/week\",\n  \"hobbies\": \"Reading, hiking\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/lifestyle-social-history",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "lifestyle-social-history"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ICE Assessment",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"ideas\": \"Thinks it's a muscle strain\",\n  \"concerns\": \"Worried about long-term disability\",\n  \"expectations\": \"Wants to return to work in 1 week\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/ice-assessment",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "ice-assessment"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Region Specific",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"region\": \"Lumbar\",\n  \"region_data\": {\n    \"specific_area\": \"L4-L5\",\n    \"radiation\": \"Right leg\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/region-specific",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "region-specific"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Subjective Outcome Measures",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"outcome_measures\": [\"ODI\", \"NPRS\"],\n  \"scores\": {\n    \"ODI\": 45,\n    \"NPRS\": 6\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/subjective/outcome-measures",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "subjective", "outcome-measures"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Objective Assessment",
-			"item": [
-				{
-					"name": "Observations General Examination",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"posture_data\": {\n    \"standing\": \"Slight forward lean\",\n    \"sitting\": \"Slouched\"\n  },\n  \"gait_observation\": {\n    \"pattern\": \"Antalgic\",\n    \"speed\": \"Reduced\"\n  },\n  \"visual_inspection\": \"Mild swelling noted\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/observations-general-examination",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "observations-general-examination"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Palpation",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"tenderness\": {\n    \"L4\": \"Moderate\",\n    \"L5\": \"Mild\"\n  },\n  \"temperature\": \"Normal\",\n  \"swelling\": \"Mild\",\n  \"tissue_texture\": {\n    \"muscle\": \"Tight\",\n    \"skin\": \"Normal\"\n  },\n  \"crepitus\": \"None\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/palpation",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "palpation"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Range of Motion",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"active_rom\": {\n    \"flexion\": 45,\n    \"extension\": 10\n  },\n  \"passive_rom\": {\n    \"flexion\": 50,\n    \"extension\": 15\n  },\n  \"pain_during_arom\": true,\n  \"pain_location_arom\": \"Lower back\",\n  \"end_feel\": \"Firm\",\n  \"comparison_other_side\": \"Reduced compared to left\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/range-of-motion",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "range-of-motion"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Muscle Strength",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"mmt_scores\": {\n    \"quadriceps\": \"4/5\",\n    \"hamstrings\": \"4/5\"\n  },\n  \"core_activation\": \"Fair\",\n  \"pain_on_resistance\": true,\n  \"pain_movement\": \"Extension\",\n  \"functional_tests\": {\n    \"squat\": \"Limited\",\n    \"single_leg_stand\": \"Unable\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/muscle-strength",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "muscle-strength"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Neurological Examination",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"sensation\": {\n    \"L4\": \"Intact\",\n    \"L5\": \"Reduced\"\n  },\n  \"reflexes\": {\n    \"patellar\": \"2+\",\n    \"achilles\": \"1+\"\n  },\n  \"myotomes\": {\n    \"L4\": \"4/5\",\n    \"L5\": \"3/5\"\n  },\n  \"neural_tension\": {\n    \"SLR\": \"Positive at 45 degrees\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/neurological-examination",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "neurological-examination"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Special Tests",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"cervical_tests\": {\n    \"spurling\": \"Negative\"\n  },\n  \"lumbar_tests\": {\n    \"slr\": \"Positive\",\n    \"femoral_stretch\": \"Negative\"\n  },\n  \"shoulder_tests\": {},\n  \"other_tests\": {\n    \"fabere\": \"Negative\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/special-tests",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "special-tests"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Functional Assessment",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"functional_data\": {\n    \"sit_to_stand\": \"Limited\",\n    \"walking\": \"Antalgic\"\n  },\n  \"movement_quality\": \"Compensatory patterns noted\",\n  \"functional_scores\": {\n    \"TUG\": \"15 seconds\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/functional-assessment",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "functional-assessment"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Joint Mobility",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"joint_data\": {\n    \"L4-L5\": \"Hypomobile\",\n    \"L5-S1\": \"Normal\"\n  },\n  \"mobility_scores\": {\n    \"L4-L5\": \"2/5\",\n    \"L5-S1\": \"4/5\"\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/joint-mobility",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "joint-mobility"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Objective Outcome Measures",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"outcome_measures\": [\"ROM\", \"Strength\"],\n  \"scores\": {\n    \"ROM\": 45,\n    \"Strength\": 4\n  }\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/assessments/objective/outcome-measures",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "assessments", "objective", "outcome-measures"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Subscriptions",
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{auth_token}}",
-						"type": "string"
-					}
-				]
-			},
-			"item": [
-				{
-					"name": "Get Subscription Plans",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/subscriptions/plans",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "subscriptions", "plans"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current Subscription",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/subscriptions/current",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "subscriptions", "current"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Subscribe to Plan",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"subscription_plan_id\": 2,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.00\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/physio/subscriptions/subscribe",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "subscriptions", "subscribe"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Usage",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/physio/subscriptions/usage",
-							"host": ["{{base_url}}"],
-							"path": ["api", "physio", "subscriptions", "usage"]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Admin",
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "{{admin_token}}",
-						"type": "string"
-					}
-				]
-			},
-			"item": [
-				{
-					"name": "Admin Login",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"const response = pm.response.json();",
-									"if (response.token) {",
-									"    pm.collectionVariables.set('admin_token', response.token);",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin1@example.com\",\n  \"password\": \"admin123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/admin/login",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "login"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Admin Logout",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/admin/logout",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "logout"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Current Admin",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/admin/me",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "me"]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Dashboard Stats",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/api/admin/dashboard/stats",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "dashboard", "stats"]
-						},
-						"description": "Get dashboard statistics including counts of admins, users, plans, and subscriptions"
-					},
-					"response": []
-				},
-				{
-					"name": "Change Password",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"old_password\": \"currentpassword123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
-						},
-						"url": {
-							"raw": "{{base_url}}/api/admin/change-password",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "change-password"]
-						},
-						"description": "Change password for the authenticated admin. Requires old password, new password, and password confirmation."
-					},
-					"response": []
-				},
-				{
-					"name": "Settings",
-					"item": [
-						{
-							"name": "Get Settings",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin/settings",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "settings"]
-								},
-								"description": "Get application settings (logo, app_name, app_details)"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Settings",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"logo\": \"/images/logo.svg\",\n  \"app_name\": \"PHYSIOPROMPT\",\n  \"app_details\": \"Excellence Through Intelligence\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/settings",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "settings"]
-								},
-								"description": "Update application settings. app_name is required, logo and app_details are optional."
-							},
-							"response": []
-						},
-						{
-							"name": "Get Statistics",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"url": {
-									"raw": "{{base_url}}/api/admin/settings/statistics",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "settings", "statistics"]
-								},
-								"description": "Get all statistics (patients, clinics, countries, years) with icon, title, and count"
-							},
-							"response": []
-						},
-						{
-							"name": "Update Statistics (Bulk)",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"statistics\": [\n    {\n      \"id\": 1,\n      \"icon\": \"Users\",\n      \"title\": \"Patients\",\n      \"count\": \"2,500+\",\n      \"sort_order\": 1\n    },\n    {\n      \"id\": 2,\n      \"icon\": \"Building2\",\n      \"title\": \"Clinics\",\n      \"count\": \"50+\",\n      \"sort_order\": 2\n    },\n    {\n      \"id\": 3,\n      \"icon\": \"Globe\",\n      \"title\": \"Countries\",\n      \"count\": \"12\",\n      \"sort_order\": 3\n    },\n    {\n      \"id\": 4,\n      \"icon\": \"Calendar\",\n      \"title\": \"Years\",\n      \"count\": \"10+\",\n      \"sort_order\": 4\n    }\n  ]\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/settings/statistics/bulk",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "settings", "statistics", "bulk"]
-								},
-								"description": "Bulk update statistics. Each statistic requires id, title, and count. icon and sort_order are optional."
-							},
-							"response": []
-						},
-						{
-							"name": "Update Single Statistic",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Accept",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"icon\": \"Users\",\n  \"title\": \"Patients\",\n  \"count\": \"2,500+\",\n  \"sort_order\": 1\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/settings/statistics/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "settings", "statistics", "1"]
-								},
-								"description": "Update a single statistic by ID. title and count are required, icon and sort_order are optional."
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Admins",
-					"item": [
-						{
-							"name": "Get All Admins",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/admins?search=",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "admins"],
-									"query": [
-										{
-											"key": "search",
-											"value": "",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Admin",
-							"request": {
-								"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"newadmin@example.com\",\n  \"phone\": \"+919876543213\",\n  \"password\": \"admin123456\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/admins",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "admins"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get Admin by ID",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/admins/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "admins", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Admin",
-							"request": {
-								"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"Updated Admin Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543214\",\n  \"password\": \"newpassword123\",\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/admins/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "admins", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Admin",
-							"request": {
-								"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/admins/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "admins", "1"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Users",
-					"item": [
-						{
-							"name": "Get All Users",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/users?search=&role_id=",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users"],
-									"query": [
-										{
-											"key": "search",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "role_id",
-											"value": "",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create User",
-							"request": {
-								"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"phone\": \"+919876543215\",\n  \"password\": \"password123\",\n  \"role_id\": 1,\n  \"referral_code\": \"REF12345\",\n  \"referred_by\": \"REF12344\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/users",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get User by ID",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/users/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update User",
-							"request": {
-								"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"Updated User Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543216\",\n  \"password\": \"newpassword123\",\n  \"role_id\": 1,\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/users/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete User",
-							"request": {
-								"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/users/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Reset User Password",
-							"request": {
-								"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/users/1/reset-password",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "users", "1", "reset-password"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Subscription Plans",
-					"item": [
-						{
-							"name": "Get All Subscription Plans",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/subscription-plans?search=&is_active=",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "subscription-plans"],
-									"query": [
-										{
-											"key": "search",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "is_active",
-											"value": "",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Subscription Plan",
-							"request": {
-								"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.0,\n  \"original_price\": 2499.0,\n  \"discounted_price\": 1999.0,\n  \"description\": \"Professional plan with all features\",\n  \"features\": [\"Unlimited assessments\", \"All features\", \"Priority support\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/subscription-plans",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "subscription-plans"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get Subscription Plan by ID",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/subscription-plans/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "subscription-plans", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update Subscription Plan",
-							"request": {
-								"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"name\": \"Updated Pro Plan\",\n  \"price\": 1799.0,\n  \"is_active\": true\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/subscription-plans/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "subscription-plans", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete Subscription Plan",
-							"request": {
-								"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/subscription-plans/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "subscription-plans", "1"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "User Subscriptions",
-					"item": [
-						{
-							"name": "Get All User Subscriptions",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/user-subscriptions?search=&status=&user_id=",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "user-subscriptions"],
-									"query": [
-										{
-											"key": "search",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "status",
-											"value": "",
-											"disabled": true
-										},
-										{
-											"key": "user_id",
-											"value": "",
-											"disabled": true
-										}
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create User Subscription",
-							"request": {
-								"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"user_id\": 1,\n  \"subscription_plan_id\": 2,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-02-01\",\n  \"status\": \"active\",\n  \"assessment_of_month\": 100,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.0\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/user-subscriptions",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "user-subscriptions"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get User Subscription by ID",
-							"request": {
-								"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "user-subscriptions", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update User Subscription",
-							"request": {
-								"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"status\": \"cancelled\",\n  \"end_date\": \"2024-01-15\"\n}"
-								},
-								"url": {
-									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "user-subscriptions", "1"]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Delete User Subscription",
-							"request": {
-								"method": "DELETE",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-								"url": {
-									"raw": "{{base_url}}/api/admin/user-subscriptions/1",
-									"host": ["{{base_url}}"],
-									"path": ["api", "admin", "user-subscriptions", "1"]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		}
-	],
-	"variable": [
-		{
-			"key": "base_url",
-			"value": "http://localhost:8000",
-			"type": "string"
-		},
-		{
-			"key": "auth_token",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "admin_token",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "assessment_id",
-			"value": "1",
-			"type": "string"
-		}
-	]
+    "info": {
+        "_postman_id": "physioprompt-api-collection",
+        "name": "PhysioPrompt API",
+        "description": "Complete API collection for PhysioPrompt Laravel application. Updated with unified JSON-based assessment structure. All 22 sections (12 Subjective + 10 Objective) now use unified endpoints with JSON storage. Subjective: PUT /api/physio/assessments/subjective/section. Objective: PUT /api/physio/assessments/objective/section. Objective sections require Subjective to be 100% complete first.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Public",
+            "item": [
+                {
+                    "name": "Get Public Settings",
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/settings",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "settings"]
+                        },
+                        "description": "Get public application settings and statistics for home page. No authentication required."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"phone\": \"+919876543210\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role_id\": 1,\n  \"referred_by\": \"REF12345\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/register",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "register"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.token) {",
+                                    "    pm.collectionVariables.set('auth_token', response.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"password\": \"password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "login"]
+                        },
+                        "description": "User/Doctor login endpoint. Returns user data with role and subscription information, along with authentication token. Use this token in Authorization header for protected routes."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"doctor1@example.com\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/forgot-password",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "forgot-password"]
+                        },
+                        "description": "Request password reset link. Sends a password reset token to the user's email. In development, the reset link is returned in the response. In production, the link will be sent via email only."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"doctor1@example.com\",\n  \"token\": \"reset_token_from_email\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/reset-password",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "reset-password"]
+                        },
+                        "description": "Reset user password using the token received via email. The token is valid for 24 hours. After successful reset, the user can login with the new password."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Logout",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{auth_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "logout"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{auth_token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/user",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "user"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Assessments",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{auth_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "List Assessments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "assessments"]
+                        },
+                        "description": "Get paginated list of all assessments for the authenticated user. Returns assessments with their subjective and objective process data."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Check Completion Status",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/completion-status",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "completion-status"
+                            ]
+                        },
+                        "description": "Check if user has any completed assessments. Returns boolean flags for subjective, objective, and overall completion status."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Check Drafts",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/check-drafts",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "check-drafts"
+                            ]
+                        },
+                        "description": "Quick check if user has any draft or in-progress assessments. Returns has_drafts (boolean) and count (number)."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Draft Assessments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/drafts",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "assessments", "drafts"]
+                        },
+                        "description": "Get all draft and in-progress assessments with completion percentages. Returns list of assessments with subjective_percentage, objective_percentage, and overall_progress."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get All Assessments",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/all",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "assessments", "all"]
+                        },
+                        "description": "Get all assessments grouped by status (drafts and completed). Returns separate arrays for drafts and completed assessments with completion percentages and dates."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Assessment",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201 || pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    if (jsonData.assessment && jsonData.assessment.id) {",
+                                    "        pm.collectionVariables.set(\"assessment_id\", jsonData.assessment.id);",
+                                    "    }",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"force_new\": false\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "assessments"]
+                        },
+                        "description": "Create a new assessment or return existing draft/in-progress assessment. If force_new is false (default), returns existing draft if found. If force_new is true, creates a new assessment even if drafts exist. Creates both Subjective and Objective assessment processes automatically."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Assessment",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "{{assessment_id}}"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Assessment",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"status\": \"in_progress\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "{{assessment_id}}"
+                            ]
+                        },
+                        "description": "Update assessment status. Status can be: draft, in_progress, or completed. Note: clinical_impression and rehab_program are now stored in assessments_process table, not assessments table."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Complete Assessment",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}/complete",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "{{assessment_id}}",
+                                "complete"
+                            ]
+                        },
+                        "description": "Mark assessment as completed. Only works when both Subjective and Objective processes are 100% complete. Increments assessment usage count."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Assessment",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/{{assessment_id}}",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "{{assessment_id}}"
+                            ]
+                        },
+                        "description": "Delete an assessment. This will cascade delete related assessment processes and all section data."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Subjective Assessment",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{auth_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "description": "Unified endpoint for all 12 Subjective Assessment sections. Use the same endpoint with different section_name values. Data is stored as JSON in the assessments table.",
+            "item": [
+                {
+                    "name": "Update Section (Unified Endpoint)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": 1,\n  \"section_name\": \"basic_details\",\n  \"section_data\": {\n    \"full_name\": \"John Doe\",\n    \"age\": 35,\n    \"gender\": \"Male\",\n    \"height\": 175.50,\n    \"weight\": 75.00,\n    \"dominance\": \"Right\",\n    \"occupation\": \"Software Engineer\",\n    \"activity_level\": \"Moderate\",\n    \"additional_info\": \"No additional info\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/subjective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "subjective",
+                                "section"
+                            ]
+                        },
+                        "description": "Unified endpoint to update any Subjective Assessment section. \n\n**section_name values:**\n- `basic_details` - Basic Patient Details (Section 1)\n- `chief_complaint` - Chief Complaint (Section 2)\n- `pain_characteristics` - Pain Characteristics (Section 3)\n- `history_present` - History of Present Condition (Section 4)\n- `functional_limitations` - Functional Limitations (Section 5)\n- `red_flags` - Red Flag Screening (Section 6)\n- `yellow_flags` - Yellow Flags (Section 7)\n- `medical_history` - Medical History (Section 8)\n- `lifestyle` - Lifestyle & Social History (Section 9)\n- `ice` - ICE Assessment (Section 10)\n- `region_specific` - Region Specific (Section 11)\n- `outcome_measures` - Outcome Measures (Section 12)\n\n**Note:** When saving `basic_details`, patient_name, patient_age, patient_gender, and patient_occupation are automatically extracted and stored in separate columns for easy admin listing."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Basic Details",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"basic_details\",\n  \"section_data\": {\n    \"full_name\": \"John Doe\",\n    \"age\": 35,\n    \"gender\": \"Male\",\n    \"height\": 175.50,\n    \"weight\": 75.00,\n    \"dominance\": \"Right\",\n    \"occupation\": \"Software Engineer\",\n    \"activity_level\": \"Moderate\",\n    \"additional_info\": \"No additional info\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/subjective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "subjective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Chief Complaint",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"chief_complaint\",\n  \"section_data\": {\n    \"chief_complaint\": \"Lower back pain for 2 weeks\",\n    \"onset\": \"Gradual\",\n    \"onset_date\": \"2024-01-15\",\n    \"symptoms\": [\"pain\", \"stiffness\"],\n    \"additional_info\": \"Pain worsens in the morning\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/subjective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "subjective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Pain Characteristics",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"pain_characteristics\",\n  \"section_data\": {\n    \"pain_location\": \"Lower back, L4-L5 region\",\n    \"pain_type\": \"Dull ache\",\n    \"pain_scale\": 6,\n    \"pain_pattern\": \"Constant\",\n    \"aggravating_factors\": \"Sitting for long periods\",\n    \"easing_factors\": \"Rest and heat therapy\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/subjective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "subjective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Objective Assessment",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{auth_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "Update Section (Unified Endpoint)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": 1,\n  \"section_name\": \"observation_general\",\n  \"section_data\": {\n    \"posture_data\": {\n      \"standing\": \"Slight forward lean\",\n      \"sitting\": \"Slouched\"\n    },\n    \"gait_observation\": {\n      \"pattern\": \"Antalgic\",\n      \"speed\": \"Reduced\"\n    },\n    \"visual_inspection\": \"Mild swelling noted\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/objective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "objective",
+                                "section"
+                            ]
+                        },
+                        "description": "Unified endpoint to update any Objective Assessment section. \n\n**section_name values:**\n- `observation_general` - Observations & General Examination (Section 1)\n- `palpation` - Palpation (Section 2)\n- `range_of_motion` - Range of Motion (Section 3)\n- `muscle_strength` - Muscle Strength (Section 4)\n- `neurological_exam` - Neurological Examination (Section 5)\n- `special_tests` - Special Tests (Section 6)\n- `functional_assessment` - Functional Assessment (Section 7)\n- `joint_mobility` - Joint Mobility (Section 8)\n- `outcome_measures` - Outcome Measures (Section 9)\n- `red_flags` - Red Flags (Section 10)\n\n**IMPORTANT:** Subjective assessment must be 100% complete before Objective sections can be accessed. Returns 403 error if Subjective is not complete."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Observation General",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"observation_general\",\n  \"section_data\": {\n    \"posture_data\": {\n      \"standing\": \"Slight forward lean\",\n      \"sitting\": \"Slouched\"\n    },\n    \"gait_observation\": {\n      \"pattern\": \"Antalgic\",\n      \"speed\": \"Reduced\"\n    },\n    \"visual_inspection\": \"Mild swelling noted\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/objective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "objective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Palpation",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"palpation\",\n  \"section_data\": {\n    \"tenderness\": {\n      \"L4\": \"Moderate\",\n      \"L5\": \"Mild\"\n    },\n    \"temperature\": \"Normal\",\n    \"swelling\": \"Mild\",\n    \"tissue_texture\": {\n      \"muscle\": \"Tight\",\n      \"skin\": \"Normal\"\n    },\n    \"crepitus\": \"None\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/objective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "objective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Example: Range of Motion",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"assessment_id\": {{assessment_id}},\n  \"section_name\": \"range_of_motion\",\n  \"section_data\": {\n    \"active_rom\": {\n      \"flexion\": 45,\n      \"extension\": 10\n    },\n    \"passive_rom\": {\n      \"flexion\": 50,\n      \"extension\": 15\n    },\n    \"pain_during_arom\": true,\n    \"pain_location_arom\": \"Lower back\",\n    \"end_feel\": \"Firm\",\n    \"comparison_other_side\": \"Reduced compared to left\"\n  }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/assessments/objective/section",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "assessments",
+                                "objective",
+                                "section"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Subscriptions",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{auth_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "Get Subscription Plans",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/subscriptions/plans",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "subscriptions", "plans"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current Subscription",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/subscriptions/current",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "subscriptions",
+                                "current"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Subscribe to Plan",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"subscription_plan_id\": 2,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.00\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/subscriptions/subscribe",
+                            "host": ["{{base_url}}"],
+                            "path": [
+                                "api",
+                                "physio",
+                                "subscriptions",
+                                "subscribe"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Usage",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/physio/subscriptions/usage",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "physio", "subscriptions", "usage"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Admin",
+            "auth": {
+                "type": "bearer",
+                "bearer": [
+                    {
+                        "key": "token",
+                        "value": "{{admin_token}}",
+                        "type": "string"
+                    }
+                ]
+            },
+            "item": [
+                {
+                    "name": "Admin Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "const response = pm.response.json();",
+                                    "if (response.token) {",
+                                    "    pm.collectionVariables.set('admin_token', response.token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"admin1@example.com\",\n  \"password\": \"admin123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "admin", "login"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Admin Logout",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/logout",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "admin", "logout"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Current Admin",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/me",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "admin", "me"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Dashboard Stats",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/dashboard/stats",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "admin", "dashboard", "stats"]
+                        },
+                        "description": "Get dashboard statistics including counts of admins, users, plans, and subscriptions"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Change Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"old_password\": \"currentpassword123\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/change-password",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "admin", "change-password"]
+                        },
+                        "description": "Change password for the authenticated admin. Requires old password, new password, and password confirmation."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Settings",
+                    "item": [
+                        {
+                            "name": "Get Settings",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/settings",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "settings"]
+                                },
+                                "description": "Get application settings (logo, app_name, app_details)"
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Settings",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"logo\": \"/images/logo.svg\",\n  \"app_name\": \"PHYSIOPROMPT\",\n  \"app_details\": \"Excellence Through Intelligence\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/settings",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "settings"]
+                                },
+                                "description": "Update application settings. app_name is required, logo and app_details are optional."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Statistics",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/settings/statistics",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "settings",
+                                        "statistics"
+                                    ]
+                                },
+                                "description": "Get all statistics (patients, clinics, countries, years) with icon, title, and count"
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Statistics (Bulk)",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"statistics\": [\n    {\n      \"id\": 1,\n      \"icon\": \"Users\",\n      \"title\": \"Patients\",\n      \"count\": \"2,500+\",\n      \"sort_order\": 1\n    },\n    {\n      \"id\": 2,\n      \"icon\": \"Building2\",\n      \"title\": \"Clinics\",\n      \"count\": \"50+\",\n      \"sort_order\": 2\n    },\n    {\n      \"id\": 3,\n      \"icon\": \"Globe\",\n      \"title\": \"Countries\",\n      \"count\": \"12\",\n      \"sort_order\": 3\n    },\n    {\n      \"id\": 4,\n      \"icon\": \"Calendar\",\n      \"title\": \"Years\",\n      \"count\": \"10+\",\n      \"sort_order\": 4\n    }\n  ]\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/settings/statistics/bulk",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "settings",
+                                        "statistics",
+                                        "bulk"
+                                    ]
+                                },
+                                "description": "Bulk update statistics. Each statistic requires id, title, and count. icon and sort_order are optional."
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Single Statistic",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"icon\": \"Users\",\n  \"title\": \"Patients\",\n  \"count\": \"2,500+\",\n  \"sort_order\": 1\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/settings/statistics/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "settings",
+                                        "statistics",
+                                        "1"
+                                    ]
+                                },
+                                "description": "Update a single statistic by ID. title and count are required, icon and sort_order are optional."
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Admins",
+                    "item": [
+                        {
+                            "name": "Get All Admins",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/admins?search=",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "admins"],
+                                    "query": [
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Admin",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"New Admin\",\n  \"email\": \"newadmin@example.com\",\n  \"phone\": \"+919876543213\",\n  \"password\": \"admin123456\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/admins",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "admins"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Admin by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/admins/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "admins", "1"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Admin",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Updated Admin Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543214\",\n  \"password\": \"newpassword123\",\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/admins/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "admins", "1"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Admin",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/admins/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "admins", "1"]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Users",
+                    "item": [
+                        {
+                            "name": "Get All Users",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users?search=&role_id=",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "users"],
+                                    "query": [
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "role_id",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create User",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"newuser@example.com\",\n  \"phone\": \"+919876543215\",\n  \"password\": \"password123\",\n  \"role_id\": 1,\n  \"referral_code\": \"REF12345\",\n  \"referred_by\": \"REF12344\",\n  \"avatar\": \"path/to/avatar.jpg\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "users"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get User by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "users", "1"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update User",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Updated User Name\",\n  \"email\": \"updated@example.com\",\n  \"phone\": \"+919876543216\",\n  \"password\": \"newpassword123\",\n  \"role_id\": 1,\n  \"avatar\": \"path/to/new-avatar.jpg\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "users", "1"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete User",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": ["api", "admin", "users", "1"]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Reset User Password",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/users/1/reset-password",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "users",
+                                        "1",
+                                        "reset-password"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "Subscription Plans",
+                    "item": [
+                        {
+                            "name": "Get All Subscription Plans",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/subscription-plans?search=&is_active=",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "subscription-plans"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "is_active",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create Subscription Plan",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Pro Plan\",\n  \"slug\": \"pro\",\n  \"price\": 1999.0,\n  \"original_price\": 2499.0,\n  \"discounted_price\": 1999.0,\n  \"description\": \"Professional plan with all features\",\n  \"features\": [\"Unlimited assessments\", \"All features\", \"Priority support\"],\n  \"free_assessments_limit\": 0,\n  \"unlimited_assessments\": true,\n  \"ad_free\": true,\n  \"pdf_download\": true,\n  \"ai_impression\": true,\n  \"ai_rehab_program\": true,\n  \"reassessment_enabled\": true,\n  \"is_active\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/subscription-plans",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "subscription-plans"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get Subscription Plan by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/subscription-plans/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "subscription-plans",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update Subscription Plan",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Updated Pro Plan\",\n  \"price\": 1799.0,\n  \"is_active\": true\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/subscription-plans/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "subscription-plans",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete Subscription Plan",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/subscription-plans/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "subscription-plans",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                },
+                {
+                    "name": "User Subscriptions",
+                    "item": [
+                        {
+                            "name": "Get All User Subscriptions",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/user-subscriptions?search=&status=&user_id=",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "user-subscriptions"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "search",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "status",
+                                            "value": "",
+                                            "disabled": true
+                                        },
+                                        {
+                                            "key": "user_id",
+                                            "value": "",
+                                            "disabled": true
+                                        }
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Create User Subscription",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": 1,\n  \"subscription_plan_id\": 2,\n  \"start_date\": \"2024-01-01\",\n  \"end_date\": \"2024-02-01\",\n  \"status\": \"active\",\n  \"assessment_of_month\": 100,\n  \"payment_id\": \"pay_123456\",\n  \"amount_paid\": 999.0\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/user-subscriptions",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "user-subscriptions"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Get User Subscription by ID",
+                            "request": {
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/user-subscriptions/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "user-subscriptions",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Update User Subscription",
+                            "request": {
+                                "method": "PUT",
+                                "header": [
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"status\": \"cancelled\",\n  \"end_date\": \"2024-01-15\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/user-subscriptions/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "user-subscriptions",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        },
+                        {
+                            "name": "Delete User Subscription",
+                            "request": {
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{base_url}}/api/admin/user-subscriptions/1",
+                                    "host": ["{{base_url}}"],
+                                    "path": [
+                                        "api",
+                                        "admin",
+                                        "user-subscriptions",
+                                        "1"
+                                    ]
+                                }
+                            },
+                            "response": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "auth_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "admin_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "assessment_id",
+            "value": "1",
+            "type": "string"
+        }
+    ]
 }
-
-
-

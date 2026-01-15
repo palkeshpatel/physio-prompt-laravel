@@ -4,9 +4,6 @@ namespace App\Http\Controllers\Api\Physio;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
-use App\Models\AssessmentType;
-use App\Models\AssessmentProcess;
-use App\Models\AssessmentProcessDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,7 +12,6 @@ class AssessmentController extends Controller
     public function index(Request $request)
     {
         $assessments = Assessment::where('user_id', $request->user()->id)
-            ->with(['subjectiveProcess.assessmentType', 'objectiveProcess.assessmentType'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -24,61 +20,150 @@ class AssessmentController extends Controller
 
     /**
      * Check if user has any completed assessments
-     * Returns completion status for both assessment types from database
+     * Returns completion status from assessments table
      */
     public function checkCompletionStatus(Request $request)
     {
         $userId = $request->user()->id;
 
-        // Get assessment types by name
-        $subjectiveType = AssessmentType::where('name', 'Subjective')->first();
-        $objectiveType = AssessmentType::where('name', 'Objective')->first();
+        $hasCompleted = Assessment::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->where('subjective_completion_percentage', '>=', 100)
+            ->where('objective_completion_percentage', '>=', 100)
+            ->exists();
 
-        $hasSubjective = false;
-        $hasObjective = false;
+        $hasSubjective = Assessment::where('user_id', $userId)
+            ->where('subjective_completion_percentage', '>=', 100)
+            ->exists();
 
-        if ($subjectiveType) {
-            $hasSubjective = AssessmentProcess::whereHas('assessment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-                ->where('assessment_type_id', $subjectiveType->id)
-                ->where('status', 'completed')
-                ->exists();
-        }
-
-        if ($objectiveType) {
-            $hasObjective = AssessmentProcess::whereHas('assessment', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })
-                ->where('assessment_type_id', $objectiveType->id)
-                ->where('status', 'completed')
-                ->exists();
-        }
+        $hasObjective = Assessment::where('user_id', $userId)
+            ->where('objective_completion_percentage', '>=', 100)
+            ->exists();
 
         return response()->json([
-            'has_completed_assessments' => $hasSubjective && $hasObjective, // Both must be completed
+            'has_completed_assessments' => $hasCompleted,
             'has_subjective' => $hasSubjective,
             'has_objective' => $hasObjective,
+        ]);
+    }
+
+    /**
+     * Quick check if user has any draft assessments
+     * Returns: { "has_drafts": true/false, "count": 0 }
+     */
+    public function checkDrafts(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $count = Assessment::where('user_id', $userId)
+            ->whereIn('status', ['draft', 'in_progress'])
+            ->count();
+
+        return response()->json([
+            'has_drafts' => $count > 0,
+            'count' => $count,
+        ]);
+    }
+
+    /**
+     * Get all draft assessments (draft or in_progress)
+     * Returns list with completion percentages
+     */
+    public function getDrafts(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $drafts = Assessment::where('user_id', $userId)
+            ->whereIn('status', ['draft', 'in_progress'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($assessment) {
+                return [
+                    'id' => $assessment->id,
+                    'status' => $assessment->status,
+                    'created_at' => $assessment->created_at,
+                    'updated_at' => $assessment->updated_at,
+                    'subjective_percentage' => round($assessment->subjective_completion_percentage ?? 0, 2),
+                    'objective_percentage' => round($assessment->objective_completion_percentage ?? 0, 2),
+                    'overall_progress' => round($assessment->completion_percentage ?? 0, 2),
+                ];
+            });
+
+        return response()->json([
+            'drafts' => $drafts,
+            'count' => $drafts->count(),
+        ]);
+    }
+
+    /**
+     * Get all assessments grouped by status (drafts and completed)
+     * Returns assessments with completion percentages
+     */
+    public function getAll(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        // Get draft assessments
+        $drafts = Assessment::where('user_id', $userId)
+            ->whereIn('status', ['draft', 'in_progress'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($assessment) {
+                return [
+                    'id' => $assessment->id,
+                    'status' => $assessment->status,
+                    'created_at' => $assessment->created_at,
+                    'updated_at' => $assessment->updated_at,
+                    'subjective_percentage' => round($assessment->subjective_completion_percentage ?? 0, 2),
+                    'objective_percentage' => round($assessment->objective_completion_percentage ?? 0, 2),
+                    'overall_progress' => round($assessment->completion_percentage ?? 0, 2),
+                ];
+            });
+
+        // Get completed assessments
+        $completed = Assessment::where('user_id', $userId)
+            ->where('status', 'completed')
+            ->orderBy('completed_at', 'desc')
+            ->get()
+            ->map(function ($assessment) {
+                return [
+                    'id' => $assessment->id,
+                    'status' => $assessment->status,
+                    'created_at' => $assessment->created_at,
+                    'completed_at' => $assessment->completed_at,
+                    'subjective_percentage' => round($assessment->subjective_completion_percentage ?? 0, 2),
+                    'objective_percentage' => round($assessment->objective_completion_percentage ?? 0, 2),
+                    'overall_progress' => round($assessment->completion_percentage ?? 0, 2),
+                ];
+            });
+
+        return response()->json([
+            'drafts' => $drafts,
+            'completed' => $completed,
+            'draft_count' => $drafts->count(),
+            'completed_count' => $completed->count(),
         ]);
     }
 
     public function store(Request $request)
     {
         $user = $request->user();
+        $forceNew = $request->input('force_new', false);
 
-        // Check for existing draft or in_progress assessment
-        $existingAssessment = Assessment::where('user_id', $user->id)
-            ->whereIn('status', ['draft', 'in_progress'])
-            ->with(['subjectiveProcess', 'objectiveProcess'])
-            ->latest()
-            ->first();
+        // Check for existing draft or in_progress assessment (unless force_new is true)
+        if (!$forceNew) {
+            $existingAssessment = Assessment::where('user_id', $user->id)
+                ->whereIn('status', ['draft', 'in_progress'])
+                ->latest()
+                ->first();
 
-        if ($existingAssessment) {
-            return response()->json([
-                'message' => 'Existing assessment found',
-                'assessment' => $existingAssessment,
-                'is_existing' => true,
-            ], 200);
+            if ($existingAssessment) {
+                return response()->json([
+                    'message' => 'Existing assessment found',
+                    'assessment' => $existingAssessment,
+                    'is_existing' => true,
+                ], 200);
+            }
         }
 
         // Check subscription limits (but don't increment yet - only when completed)
@@ -110,114 +195,16 @@ class AssessmentController extends Controller
             ], 403);
         }
 
-        // Get assessment type IDs
-        $subjectiveType = AssessmentType::where('name', 'Subjective')->first();
-        $objectiveType = AssessmentType::where('name', 'Objective')->first();
-
-        if (!$subjectiveType || !$objectiveType) {
-            return response()->json([
-                'message' => 'Assessment types not found',
-            ], 500);
-        }
-
-        // Create assessment (1 entry)
-        $assessment = Assessment::create([
-            'user_id' => $user->id,
-            'status' => 'draft',
-        ]);
-
-        // Create 2 process entries (Subjective and Objective)
-        $subjectiveProcess = AssessmentProcess::create([
-            'assessments_id' => $assessment->id,
-            'assessment_type_id' => $subjectiveType->id,
-            'status' => 'draft',
-            'completion_percentage' => 0,
-        ]);
-
-        $objectiveProcess = AssessmentProcess::create([
-            'assessments_id' => $assessment->id,
-            'assessment_type_id' => $objectiveType->id,
-            'status' => 'draft',
-            'completion_percentage' => 0,
-        ]);
-
-        // Create 22 process detail entries (12 Subjective + 10 Objective)
-        $subjectiveDetails = [
-            'subjective_basic_patient_details',
-            'subjective_chief_complaint',
-            'subjective_pain_characteristics',
-            'subjective_history_present_condition',
-            'subjective_functional_limitations',
-            'subjective_red_flag_screening',
-            'subjective_yellow_flags',
-            'subjective_medical_history',
-            'subjective_lifestyle_social_history',
-            'subjective_ice_assessment',
-            'subjective_region_specific',
-            'subjective_outcome_measures',
-        ];
-
-        $objectiveDetails = [
-            'objective_observations_general_examination',
-            'objective_palpation',
-            'objective_range_of_motion',
-            'objective_muscle_strength',
-            'objective_neurological_examination',
-            'objective_special_tests',
-            'objective_functional_assessment',
-            'objective_joint_mobility',
-            'objective_outcome_measures',
-        ];
-
-        foreach ($subjectiveDetails as $detail) {
-            AssessmentProcessDetail::create([
-                'assessments_pocess_id' => $subjectiveProcess->id,
-                'assessment_table' => $detail,
-            ]);
-        }
-
-        foreach ($objectiveDetails as $detail) {
-            AssessmentProcessDetail::create([
-                'assessments_pocess_id' => $objectiveProcess->id,
-                'assessment_table' => $detail,
-            ]);
-        }
-
+        // Return success - assessment will be created when basic_details is submitted
         return response()->json([
-            'message' => 'Assessment created successfully',
-            'assessment' => $assessment->load(['subjectiveProcess', 'objectiveProcess']),
-            'is_existing' => false,
-        ], 201);
+            'message' => 'Ready to start assessment. Please fill basic details to begin.',
+            'can_start' => true,
+        ], 200);
     }
 
     public function show(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->with([
-                'subjectiveProcess.assessmentType',
-                'subjectiveProcess.basicPatientDetails',
-                'subjectiveProcess.chiefComplaint',
-                'subjectiveProcess.painCharacteristics',
-                'subjectiveProcess.historyPresentCondition',
-                'subjectiveProcess.functionalLimitations',
-                'subjectiveProcess.redFlagScreening',
-                'subjectiveProcess.yellowFlags',
-                'subjectiveProcess.medicalHistory',
-                'subjectiveProcess.lifestyleSocialHistory',
-                'subjectiveProcess.iceAssessment',
-                'subjectiveProcess.regionSpecific',
-                'subjectiveProcess.subjectiveOutcomeMeasures',
-                'objectiveProcess.assessmentType',
-                'objectiveProcess.observationsGeneralExamination',
-                'objectiveProcess.palpation',
-                'objectiveProcess.rangeOfMotion',
-                'objectiveProcess.muscleStrength',
-                'objectiveProcess.neurologicalExamination',
-                'objectiveProcess.specialTests',
-                'objectiveProcess.functionalAssessment',
-                'objectiveProcess.jointMobility',
-                'objectiveProcess.objectiveOutcomeMeasures',
-            ])
             ->findOrFail($id);
 
         return response()->json($assessment);
@@ -226,25 +213,21 @@ class AssessmentController extends Controller
     public function update(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->with(['subjectiveProcess', 'objectiveProcess'])
             ->findOrFail($id);
 
         $request->validate([
             'status' => 'sometimes|in:draft,in_progress,completed',
+            'clinical_impression' => 'sometimes|string|nullable',
+            'rehab_program' => 'sometimes|string|nullable',
         ]);
 
         $wasCompleted = $assessment->status === 'completed';
         $isBeingCompleted = $request->status === 'completed' && !$wasCompleted;
 
-        // Check if both processes are 100% complete before allowing overall completion
+        // Check if both subjective and objective are 100% complete before allowing overall completion
         if ($isBeingCompleted) {
-            $subjectiveComplete = $assessment->subjectiveProcess &&
-                $assessment->subjectiveProcess->completion_percentage >= 100 &&
-                $assessment->subjectiveProcess->status === 'completed';
-
-            $objectiveComplete = $assessment->objectiveProcess &&
-                $assessment->objectiveProcess->completion_percentage >= 100 &&
-                $assessment->objectiveProcess->status === 'completed';
+            $subjectiveComplete = $assessment->subjective_completion_percentage >= 100;
+            $objectiveComplete = $assessment->objective_completion_percentage >= 100;
 
             if (!$subjectiveComplete || !$objectiveComplete) {
                 return response()->json([
@@ -255,24 +238,23 @@ class AssessmentController extends Controller
             }
         }
 
-        $assessment->update($request->only(['status']));
+        $assessment->update($request->only(['status', 'clinical_impression', 'rehab_program']));
 
-        // Only increment if being completed AND both processes are 100% complete
+        // Only increment if being completed AND both are 100% complete
         if ($isBeingCompleted) {
-            // Increment assessment usage count when assessment is completed
+            $assessment->update(['completed_at' => now()]);
             $this->incrementAssessmentUsage($request->user(), $assessment->id);
         }
 
         return response()->json([
             'message' => 'Assessment updated successfully',
-            'assessment' => $assessment->load(['subjectiveProcess.assessmentType', 'objectiveProcess.assessmentType']),
+            'assessment' => $assessment,
         ]);
     }
 
     /**
      * Increment assessment usage count for the current month
      * Only increments once per assessment completion
-     * The complete() method ensures we only call this when status changes to 'completed'
      */
     private function incrementAssessmentUsage($user, $assessmentId = null)
     {
@@ -293,9 +275,6 @@ class AssessmentController extends Controller
 
         $limit = $activeSubscription->assessment_of_month;
 
-        // Increment usage count
-        // Note: The complete() method already checks if assessment was already completed
-        // So we can safely increment here without double counting
         if ($usage) {
             DB::table('user_assessment_usage')
                 ->where('id', $usage->id)
@@ -333,51 +312,42 @@ class AssessmentController extends Controller
     public function complete(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->with(['subjectiveProcess', 'objectiveProcess'])
             ->findOrFail($id);
 
         // Only allow completion if not already completed
         if ($assessment->status === 'completed') {
             return response()->json([
                 'message' => 'Assessment is already completed',
-                'assessment' => $assessment->load(['subjectiveProcess.assessmentType', 'objectiveProcess.assessmentType']),
+                'assessment' => $assessment,
             ]);
         }
 
-        // Verify both processes are 100% complete before marking as completed
-        $assessment->refresh();
-        $assessment->load(['subjectiveProcess', 'objectiveProcess']);
-
-        $subjectiveComplete = $assessment->subjectiveProcess &&
-            $assessment->subjectiveProcess->completion_percentage >= 100 &&
-            $assessment->subjectiveProcess->status === 'completed';
-
-        $objectiveComplete = $assessment->objectiveProcess &&
-            $assessment->objectiveProcess->completion_percentage >= 100 &&
-            $assessment->objectiveProcess->status === 'completed';
+        // Verify both are 100% complete before marking as completed
+        $subjectiveComplete = $assessment->subjective_completion_percentage >= 100;
+        $objectiveComplete = $assessment->objective_completion_percentage >= 100;
 
         if (!$subjectiveComplete || !$objectiveComplete) {
             return response()->json([
                 'message' => 'Assessment is not 100% complete. Both Subjective and Objective assessments must be completed.',
                 'subjective_complete' => $subjectiveComplete,
                 'objective_complete' => $objectiveComplete,
-                'subjective_percentage' => $assessment->subjectiveProcess ? $assessment->subjectiveProcess->completion_percentage : 0,
-                'objective_percentage' => $assessment->objectiveProcess ? $assessment->objectiveProcess->completion_percentage : 0,
+                'subjective_percentage' => $assessment->subjective_completion_percentage ?? 0,
+                'objective_percentage' => $assessment->objective_completion_percentage ?? 0,
             ], 400);
         }
 
         // Mark as completed
         $assessment->update([
             'status' => 'completed',
+            'completed_at' => now(),
         ]);
 
         // Increment assessment usage count only once when completed
-        // This will only increment if status was not already 'completed'
         $this->incrementAssessmentUsage($request->user(), $assessment->id);
 
         return response()->json([
             'message' => 'Assessment completed successfully',
-            'assessment' => $assessment->load(['subjectiveProcess.assessmentType', 'objectiveProcess.assessmentType']),
+            'assessment' => $assessment,
         ]);
     }
 }
