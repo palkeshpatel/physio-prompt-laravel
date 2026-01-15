@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_joint_mobility', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_jm_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_jm_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('joint_data')->nullable();
             $table->json('mobility_scores')->nullable();
             $table->text('additional_info')->nullable();

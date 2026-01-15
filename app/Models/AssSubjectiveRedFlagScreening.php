@@ -11,7 +11,7 @@ class AssSubjectiveRedFlagScreening extends Model
     use HasFactory;
 
     protected $fillable = [
-        'assessment_id',
+        'assessments_process_id',
         'red_flags',
         'red_flag_present',
         'red_flag_details',
@@ -23,9 +23,9 @@ class AssSubjectiveRedFlagScreening extends Model
         'red_flag_present' => 'boolean',
     ];
 
-    public function assessment(): BelongsTo
+    public function assessmentProcess(): BelongsTo
     {
-        return $this->belongsTo(Assessment::class);
+        return $this->belongsTo(AssessmentProcess::class, 'assessments_process_id');
     }
 }
 

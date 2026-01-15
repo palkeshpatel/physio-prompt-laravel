@@ -23,9 +23,11 @@ Route::prefix('physio')->group(function () {
         // Assessment routes
         Route::prefix('assessments')->group(function () {
             Route::get('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'index']);
+            Route::get('/completion-status', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'checkCompletionStatus']);
             Route::post('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'store']);
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'show']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'update']);
+            Route::post('/{id}/complete', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'complete']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'destroy']);
 
             // Subjective assessment sections (PUT method - creates if doesn't exist, updates if exists)

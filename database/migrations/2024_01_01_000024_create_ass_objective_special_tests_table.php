@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_special_tests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_st_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_st_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('cervical_tests')->nullable();
             $table->json('lumbar_tests')->nullable();
             $table->json('shoulder_tests')->nullable();

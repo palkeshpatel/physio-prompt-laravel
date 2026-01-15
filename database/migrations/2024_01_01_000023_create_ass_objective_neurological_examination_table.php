@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_neurological_examination', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_neuro_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_neuro_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('sensation')->nullable();
             $table->json('reflexes')->nullable();
             $table->json('myotomes')->nullable();

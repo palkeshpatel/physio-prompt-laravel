@@ -11,14 +11,14 @@ class AssessmentTypeSeeder extends Seeder
     {
         $types = [
             [
-                'name' => 'Subjective Assessment',
+                'name' => 'Subjective',
                 'slug' => 'subjective',
                 'description' => 'Patient-reported information through interviews and questionnaires',
                 'total_sections' => 12,
                 'is_active' => true,
             ],
             [
-                'name' => 'Objective Assessment',
+                'name' => 'Objective',
                 'slug' => 'objective',
                 'description' => 'Physical examination and clinical tests performed by healthcare professionals',
                 'total_sections' => 10,
@@ -27,7 +27,10 @@ class AssessmentTypeSeeder extends Seeder
         ];
 
         foreach ($types as $type) {
-            AssessmentType::create($type);
+            AssessmentType::updateOrCreate(
+                ['slug' => $type['slug']],
+                $type
+            );
         }
     }
 }

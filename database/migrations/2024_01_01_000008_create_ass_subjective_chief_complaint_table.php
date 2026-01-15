@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_chief_complaint', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_cc_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_cc_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->text('chief_complaint')->nullable();
             $table->enum('onset', ['Sudden', 'Gradual', 'After a specific incident'])->nullable();
             $table->dateTime('onset_date')->nullable();

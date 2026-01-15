@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_region_specific', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_rs_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_rs_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->string('region', 100)->nullable();
             $table->json('region_data')->nullable();
             $table->text('additional_info')->nullable();

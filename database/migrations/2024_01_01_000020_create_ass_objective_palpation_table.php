@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_palpation', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_palp_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_palp_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('tenderness')->nullable();
             $table->string('temperature', 50)->nullable();
             $table->string('swelling', 100)->nullable();

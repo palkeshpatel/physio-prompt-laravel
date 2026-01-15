@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_range_of_motion', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_rom_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_rom_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('active_rom')->nullable();
             $table->json('passive_rom')->nullable();
             $table->boolean('pain_during_arom')->default(false);

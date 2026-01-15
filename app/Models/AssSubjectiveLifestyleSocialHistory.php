@@ -11,7 +11,7 @@ class AssSubjectiveLifestyleSocialHistory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'assessment_id',
+        'assessments_process_id',
         'job_demands',
         'work_hours',
         'smoking',
@@ -27,9 +27,9 @@ class AssSubjectiveLifestyleSocialHistory extends Model
         'completion_percentage' => 'decimal:2',
     ];
 
-    public function assessment(): BelongsTo
+    public function assessmentProcess(): BelongsTo
     {
-        return $this->belongsTo(Assessment::class);
+        return $this->belongsTo(AssessmentProcess::class, 'assessments_process_id');
     }
 }
 

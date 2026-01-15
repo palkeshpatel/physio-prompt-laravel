@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_pain_characteristics', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_pc_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_pc_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->string('pain_location', 255)->nullable();
             $table->string('pain_type', 100)->nullable();
             $table->integer('pain_scale')->nullable();

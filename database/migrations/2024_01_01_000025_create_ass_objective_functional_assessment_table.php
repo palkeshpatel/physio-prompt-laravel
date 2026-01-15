@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_objective_functional_assessment', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_obj_func_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_obj_func_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('functional_data')->nullable();
             $table->text('movement_quality')->nullable();
             $table->json('functional_scores')->nullable();

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_basic_patient_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_bpd_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_bpd_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->string('full_name', 255)->nullable();
             $table->integer('age')->nullable();
             $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_history_present_condition', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_hpc_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_hpc_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->string('duration', 100)->nullable();
             $table->string('progression', 100)->nullable();
             $table->text('previous_episodes')->nullable();

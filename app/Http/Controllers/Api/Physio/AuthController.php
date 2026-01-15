@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\Physio;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserSubscription;
+use App\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -39,11 +41,28 @@ class AuthController extends Controller
             'referred_by' => $request->referred_by,
         ]);
 
+        // Auto-assign free subscription to new users
+        $freePlan = SubscriptionPlan::where('name', 'Free Plan')
+            ->orWhere('price', 0)
+            ->first();
+
+        if ($freePlan) {
+            UserSubscription::create([
+                'user_id' => $user->id,
+                'subscription_plan_id' => $freePlan->id,
+                'start_date' => now(),
+                'end_date' => now()->addYear(), // Free plan valid for 1 year
+                'status' => 'active',
+                'assessment_of_month' => $freePlan->free_assessments_limit ?? 3,
+                'amount_paid' => 0,
+            ]);
+        }
+
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user->load('role'),
+            'user' => $user->load('role', 'activeSubscription.subscriptionPlan'),
             'token' => $token,
         ], 201);
     }
@@ -113,7 +132,7 @@ class AuthController extends Controller
         // TODO: Send email with reset link
         // For now, we'll return the token in the response (in production, send via email)
         // The reset link should be: {frontend_url}/reset-password?token={token}&email={email}
-        
+
         // In production, send email here:
         // Mail::to($request->email)->send(new ResetPasswordMail($token, $request->email));
 
@@ -177,6 +196,3 @@ class AuthController extends Controller
         ]);
     }
 }
-
-
-

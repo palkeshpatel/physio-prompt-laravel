@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_red_flag_screening', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_rfs_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_rfs_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('red_flags')->nullable();
             $table->boolean('red_flag_present')->default(false);
             $table->text('red_flag_details')->nullable();

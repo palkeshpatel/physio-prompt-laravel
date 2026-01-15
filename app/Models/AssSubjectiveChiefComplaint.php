@@ -10,8 +10,10 @@ class AssSubjectiveChiefComplaint extends Model
 {
     use HasFactory;
 
+    protected $table = 'ass_subjective_chief_complaint';
+
     protected $fillable = [
-        'assessment_id',
+        'assessments_process_id',
         'chief_complaint',
         'onset',
         'onset_date',
@@ -26,9 +28,9 @@ class AssSubjectiveChiefComplaint extends Model
         'completion_percentage' => 'decimal:2',
     ];
 
-    public function assessment(): BelongsTo
+    public function assessmentProcess(): BelongsTo
     {
-        return $this->belongsTo(Assessment::class);
+        return $this->belongsTo(AssessmentProcess::class, 'assessments_process_id');
     }
 }
 

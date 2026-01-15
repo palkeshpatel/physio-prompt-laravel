@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_ice_assessment', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_ice_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_ice_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->text('ideas')->nullable();
             $table->text('concerns')->nullable();
             $table->text('expectations')->nullable();

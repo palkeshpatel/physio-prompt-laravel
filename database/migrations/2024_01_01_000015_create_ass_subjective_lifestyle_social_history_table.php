@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('ass_subjective_lifestyle_social_history', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('assessment_id');
-            $table->foreign('assessment_id', 'fk_sub_lsh_assessment')->references('id')->on('assessments')->onDelete('cascade');
+            $table->unsignedBigInteger('assessments_process_id');
+            $table->foreign('assessments_process_id', 'fk_sub_lsh_process')->references('id')->on('assessments_process')->onDelete('cascade');
             $table->json('job_demands')->nullable();
             $table->string('work_hours', 50)->nullable();
             $table->string('smoking', 50)->nullable();

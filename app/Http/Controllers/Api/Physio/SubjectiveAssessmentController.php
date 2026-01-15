@@ -4,14 +4,71 @@ namespace App\Http\Controllers\Api\Physio;
 
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
+use App\Models\AssessmentProcess;
+use App\Models\AssessmentType;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubjectiveAssessmentController extends Controller
 {
-    private function getAssessment(Request $request, $assessmentId)
+    /**
+     * Helper method to handle section updates with error handling
+     */
+    private function handleSectionUpdate(Request $request, $relationshipName, $successMessage)
     {
-        return Assessment::where('user_id', $request->user()->id)
+        try {
+            $request->validate([
+                'assessment_id' => 'required|exists:assessments,id',
+            ]);
+
+            $process = $this->getSubjectiveProcess($request, $request->assessment_id);
+            $data = $request->except(['assessment_id']);
+            $data['assessments_process_id'] = $process->id;
+
+            $section = $this->updateOrCreateSection($process, $relationshipName, $data);
+            $this->updateCompletionPercentage($process);
+
+            return response()->json([
+                'message' => $successMessage,
+                'data' => $section,
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error('Assessment process not found', [
+                'assessment_id' => $request->assessment_id,
+                'user_id' => $request->user()->id,
+                'relationship' => $relationshipName,
+                'error' => $e->getMessage()
+            ]);
+            return response()->json([
+                'message' => 'Assessment not found or process not initialized. Please create a new assessment.',
+            ], 404);
+        } catch (\Exception $e) {
+            Log::error('Error saving section', [
+                'assessment_id' => $request->assessment_id,
+                'user_id' => $request->user()->id,
+                'relationship' => $relationshipName,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'message' => 'An error occurred while saving. Please try again.',
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
+            ], 500);
+        }
+    }
+
+    private function getSubjectiveProcess(Request $request, $assessmentId)
+    {
+        $assessment = Assessment::where('user_id', $request->user()->id)
             ->findOrFail($assessmentId);
+
+        $subjectiveType = AssessmentType::where('name', 'Subjective')->firstOrFail();
+
+        return AssessmentProcess::where('assessments_id', $assessment->id)
+            ->where('assessment_type_id', $subjectiveType->id)
+            ->firstOrFail();
     }
 
     /**
@@ -19,20 +76,33 @@ class SubjectiveAssessmentController extends Controller
      * Creates entry if doesn't exist, updates if exists
      * Can update one field at a time or multiple fields
      */
-    private function updateOrCreateSection($assessment, $relationshipName, $data)
+    private function updateOrCreateSection($process, $relationshipName, $data)
     {
-        $relationship = $assessment->$relationshipName();
+        try {
+            if (!method_exists($process, $relationshipName)) {
+                throw new \Exception("Relationship '{$relationshipName}' not found on AssessmentProcess model");
+            }
 
-        // Use updateOrCreate - creates if doesn't exist, updates if exists
-        $section = $relationship->updateOrCreate(
-            ['assessment_id' => $assessment->id],
-            $data
-        );
+            $relationship = $process->$relationshipName();
 
-        // Refresh to get updated data
-        $section->refresh();
+            // Use updateOrCreate - creates if doesn't exist, updates if exists
+            $section = $relationship->updateOrCreate(
+                ['assessments_process_id' => $process->id],
+                $data
+            );
 
-        return $section;
+            // Refresh to get updated data
+            $section->refresh();
+
+            return $section;
+        } catch (\Exception $e) {
+            Log::error('Error in updateOrCreateSection', [
+                'process_id' => $process->id,
+                'relationship' => $relationshipName,
+                'error' => $e->getMessage()
+            ]);
+            throw $e;
+        }
     }
 
     /**
@@ -40,26 +110,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function basicPatientDetails(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-
-        // Get all data except assessment_id
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        // Update or create section
-        $section = $this->updateOrCreateSection($assessment, 'basicPatientDetails', $data);
-
-        // Update completion percentage
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Basic patient details saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'basicPatientDetails', 'Basic patient details saved successfully');
     }
 
     /**
@@ -67,21 +118,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function chiefComplaint(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'chiefComplaint', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Chief complaint saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'chiefComplaint', 'Chief complaint saved successfully');
     }
 
     /**
@@ -89,21 +126,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function painCharacteristics(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'painCharacteristics', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Pain characteristics saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'painCharacteristics', 'Pain characteristics saved successfully');
     }
 
     /**
@@ -111,21 +134,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function historyPresentCondition(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'historyPresentCondition', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'History of present condition saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'historyPresentCondition', 'History of present condition saved successfully');
     }
 
     /**
@@ -133,21 +142,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function functionalLimitations(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'functionalLimitations', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Functional limitations saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'functionalLimitations', 'Functional limitations saved successfully');
     }
 
     /**
@@ -155,21 +150,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function redFlagScreening(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'redFlagScreening', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Red flag screening saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'redFlagScreening', 'Red flag screening saved successfully');
     }
 
     /**
@@ -177,21 +158,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function yellowFlags(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'yellowFlags', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Yellow flags saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'yellowFlags', 'Yellow flags saved successfully');
     }
 
     /**
@@ -199,21 +166,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function medicalHistory(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'medicalHistory', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Medical history saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'medicalHistory', 'Medical history saved successfully');
     }
 
     /**
@@ -221,21 +174,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function lifestyleSocialHistory(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'lifestyleSocialHistory', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Lifestyle & social history saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'lifestyleSocialHistory', 'Lifestyle & social history saved successfully');
     }
 
     /**
@@ -243,21 +182,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function iceAssessment(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'iceAssessment', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'ICE assessment saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'iceAssessment', 'ICE assessment saved successfully');
     }
 
     /**
@@ -265,21 +190,7 @@ class SubjectiveAssessmentController extends Controller
      */
     public function regionSpecific(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'regionSpecific', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Region specific saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'regionSpecific', 'Region specific saved successfully');
     }
 
     /**
@@ -287,28 +198,16 @@ class SubjectiveAssessmentController extends Controller
      */
     public function outcomeMeasures(Request $request)
     {
-        $request->validate([
-            'assessment_id' => 'required|exists:assessments,id',
-        ]);
-
-        $assessment = $this->getAssessment($request, $request->assessment_id);
-        $data = $request->except(['assessment_id']);
-        $data['assessment_id'] = $assessment->id;
-
-        $section = $this->updateOrCreateSection($assessment, 'subjectiveOutcomeMeasures', $data);
-        $this->updateCompletionPercentage($assessment, 'subjective');
-
-        return response()->json([
-            'message' => 'Outcome measures saved successfully',
-            'data' => $section,
-        ]);
+        return $this->handleSectionUpdate($request, 'subjectiveOutcomeMeasures', 'Outcome measures saved successfully');
     }
 
-    private function updateCompletionPercentage($assessment, $type)
+    private function updateCompletionPercentage($process)
     {
-        if ($type === 'subjective') {
+        try {
+            DB::beginTransaction();
+
             // Load all relationships
-            $assessment->load([
+            $process->load([
                 'basicPatientDetails',
                 'chiefComplaint',
                 'painCharacteristics',
@@ -324,18 +223,18 @@ class SubjectiveAssessmentController extends Controller
             ]);
 
             $sections = [
-                $assessment->basicPatientDetails,
-                $assessment->chiefComplaint,
-                $assessment->painCharacteristics,
-                $assessment->historyPresentCondition,
-                $assessment->functionalLimitations,
-                $assessment->redFlagScreening,
-                $assessment->yellowFlags,
-                $assessment->medicalHistory,
-                $assessment->lifestyleSocialHistory,
-                $assessment->iceAssessment,
-                $assessment->regionSpecific,
-                $assessment->subjectiveOutcomeMeasures,
+                $process->basicPatientDetails,
+                $process->chiefComplaint,
+                $process->painCharacteristics,
+                $process->historyPresentCondition,
+                $process->functionalLimitations,
+                $process->redFlagScreening,
+                $process->yellowFlags,
+                $process->medicalHistory,
+                $process->lifestyleSocialHistory,
+                $process->iceAssessment,
+                $process->regionSpecific,
+                $process->subjectiveOutcomeMeasures,
             ];
 
             $totalPercentage = 0;
@@ -349,9 +248,50 @@ class SubjectiveAssessmentController extends Controller
 
             // There are 12 sections total for subjective assessment
             $average = $count > 0 ? $totalPercentage / 12 : 0;
-            $finalPercentage = $average * 1.00; // 100% weight (each section contributes equally)
+            $finalPercentage = round($average, 2);
 
-            $assessment->update(['completion_percentage' => round($finalPercentage, 2)]);
+            // Update process completion percentage and status
+            $updateData = ['completion_percentage' => $finalPercentage];
+
+            if ($finalPercentage >= 100) {
+                $updateData['status'] = 'completed';
+                $updateData['completed_at'] = now();
+            } elseif ($finalPercentage > 0) {
+                $updateData['status'] = 'in_progress';
+            }
+
+            $process->update($updateData);
+
+            // Update main assessment status
+            $assessment = $process->assessment;
+            if ($assessment) {
+                $assessment->load(['subjectiveProcess', 'objectiveProcess']);
+
+                $subjectiveComplete = $assessment->subjectiveProcess &&
+                    $assessment->subjectiveProcess->completion_percentage >= 100;
+                $objectiveComplete = $assessment->objectiveProcess &&
+                    $assessment->objectiveProcess->completion_percentage >= 100;
+
+                if ($subjectiveComplete && $objectiveComplete) {
+                    $assessment->update(['status' => 'completed']);
+                } elseif (
+                    $subjectiveComplete || $objectiveComplete ||
+                    ($assessment->subjectiveProcess && $assessment->subjectiveProcess->completion_percentage > 0) ||
+                    ($assessment->objectiveProcess && $assessment->objectiveProcess->completion_percentage > 0)
+                ) {
+                    $assessment->update(['status' => 'in_progress']);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating completion percentage', [
+                'process_id' => $process->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            // Don't throw - just log the error so the main request can still succeed
         }
     }
 }
