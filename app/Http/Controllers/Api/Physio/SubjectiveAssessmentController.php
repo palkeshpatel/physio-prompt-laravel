@@ -27,17 +27,18 @@ class SubjectiveAssessmentController extends Controller
                 ], 401);
             }
 
-        $request->validate([
-            'section_name' => 'required|string|in:basic_details,chief_complaint,pain_characteristics,history_present,functional_limitations,red_flags,yellow_flags,medical_history,lifestyle,ice,region_specific,outcome_measures',
-            'section_data' => 'required|array',
-        ]);
-
         $sectionName = $request->section_name;
         $sectionData = $request->section_data;
 
         // For basic_details: Create assessment if it doesn't exist
         // For other sections: Require assessment_id and check if basic_details is completed
         if ($sectionName === 'basic_details') {
+            // Validate section_name and section_data only
+            $request->validate([
+                'section_name' => 'required|string|in:basic_details',
+                'section_data' => 'required|array',
+            ]);
+            
             // Create or get assessment when basic_details is submitted
             $assessmentId = $request->input('assessment_id');
             
@@ -52,6 +53,8 @@ class SubjectiveAssessmentController extends Controller
             // For other sections, require assessment_id and check if basic_details exists
             $request->validate([
                 'assessment_id' => 'required|exists:assessments,id',
+                'section_name' => 'required|string|in:chief_complaint,pain_characteristics,history_present,functional_limitations,red_flags,yellow_flags,medical_history,lifestyle,ice,region_specific,outcome_measures',
+                'section_data' => 'required|array',
             ]);
             
             $assessment = Assessment::where('user_id', $user->id)
