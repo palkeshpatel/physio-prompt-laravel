@@ -30,23 +30,25 @@ class SubjectiveAssessmentController extends Controller
         $sectionName = $request->section_name;
         $sectionData = $request->section_data;
 
-        // For basic_details: Create assessment if it doesn't exist
+        // For basic_details: Create assessment if assessment_id is 0, update if it's an actual ID
         // For other sections: Require assessment_id and check if basic_details is completed
         if ($sectionName === 'basic_details') {
-            // Validate section_name and section_data only
+            // Validate section_name, section_data, and assessment_id
             $request->validate([
                 'section_name' => 'required|string|in:basic_details',
                 'section_data' => 'required|array',
+                'assessment_id' => 'required|integer|min:0', // 0 for new, actual_id for existing
             ]);
             
-            // Create or get assessment when basic_details is submitted
+            // Get assessment_id: 0 means new, actual_id means existing
             $assessmentId = $request->input('assessment_id');
             
-            if ($assessmentId) {
+            if ($assessmentId > 0) {
+                // Existing assessment - find and update
                 $assessment = Assessment::where('user_id', $user->id)
                     ->findOrFail($assessmentId);
             } else {
-                // Create new assessment when basic_details is submitted for the first time
+                // assessment_id = 0 means new assessment - create it
                 $assessment = $this->createAssessmentForUser($user);
             }
         } else {

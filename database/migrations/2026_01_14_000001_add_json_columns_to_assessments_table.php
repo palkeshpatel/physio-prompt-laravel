@@ -26,8 +26,14 @@ return new class extends Migration
             $table->string('patient_gender', 50)->nullable()->after('patient_age');
             $table->string('patient_occupation', 255)->nullable()->after('patient_gender');
             
+            // Additional patient details columns (duplicate for easier admin access)
+            $table->string('full_name', 255)->nullable()->after('patient_occupation');
+            $table->integer('age')->nullable()->after('full_name');
+            $table->string('gender', 50)->nullable()->after('age');
+            $table->string('occupation', 255)->nullable()->after('gender');
+            
             // Subjective Sections (12 JSON columns)
-            $table->json('subjective_basic_details')->nullable()->after('patient_occupation');
+            $table->json('subjective_basic_details')->nullable()->after('occupation');
             $table->json('subjective_chief_complaint')->nullable()->after('subjective_basic_details');
             $table->json('subjective_pain_characteristics')->nullable()->after('subjective_chief_complaint');
             $table->json('subjective_history_present')->nullable()->after('subjective_pain_characteristics');
@@ -80,6 +86,10 @@ return new class extends Migration
                 'patient_age',
                 'patient_gender',
                 'patient_occupation',
+                'full_name',
+                'age',
+                'gender',
+                'occupation',
                 'subjective_basic_details',
                 'subjective_chief_complaint',
                 'subjective_pain_characteristics',
