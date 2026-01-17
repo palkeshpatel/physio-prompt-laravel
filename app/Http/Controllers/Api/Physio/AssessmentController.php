@@ -151,7 +151,7 @@ class AssessmentController extends Controller
         $forceNew = $request->input('force_new', false);
 
         // Check for existing draft or in_progress assessment (unless force_new is true)
-        if (!$forceNew) {
+        if (! $forceNew) {
             $existingAssessment = Assessment::where('user_id', $user->id)
                 ->whereIn('status', ['draft', 'in_progress'])
                 ->latest()
@@ -178,7 +178,7 @@ class AssessmentController extends Controller
 
         $activeSubscription = $user->activeSubscription;
 
-        if (!$activeSubscription) {
+        if (! $activeSubscription) {
             return response()->json([
                 'message' => 'No active subscription found',
             ], 403);
@@ -187,7 +187,7 @@ class AssessmentController extends Controller
         $limit = $activeSubscription->assessment_of_month;
         $used = $usage ? $usage->assessments_used : 0;
 
-        if ($used >= $limit && !$activeSubscription->subscriptionPlan->unlimited_assessments) {
+        if ($used >= $limit && ! $activeSubscription->subscriptionPlan->unlimited_assessments) {
             return response()->json([
                 'message' => 'Monthly assessment limit reached',
                 'limit' => $limit,
@@ -204,16 +204,24 @@ class AssessmentController extends Controller
 
     public function show(Request $request, $id)
     {
-        $assessment = Assessment::where('user_id', $request->user()->id)
-            ->findOrFail($id);
+        try {
+            $assessment = Assessment::where('user_id', $request->user()->id)
+                ->where('id', $id)
+                ->firstOrFail();
 
-        return response()->json($assessment);
+            return response()->json($assessment);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Assessment not found. The assessment may not exist or may not belong to your account.',
+            ], 404);
+        }
     }
 
     public function update(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->firstOrFail();
 
         $request->validate([
             'status' => 'sometimes|in:draft,in_progress,completed',
@@ -222,14 +230,14 @@ class AssessmentController extends Controller
         ]);
 
         $wasCompleted = $assessment->status === 'completed';
-        $isBeingCompleted = $request->status === 'completed' && !$wasCompleted;
+        $isBeingCompleted = $request->status === 'completed' && ! $wasCompleted;
 
         // Check if both subjective and objective are 100% complete before allowing overall completion
         if ($isBeingCompleted) {
             $subjectiveComplete = $assessment->subjective_completion_percentage >= 100;
             $objectiveComplete = $assessment->objective_completion_percentage >= 100;
 
-            if (!$subjectiveComplete || !$objectiveComplete) {
+            if (! $subjectiveComplete || ! $objectiveComplete) {
                 return response()->json([
                     'message' => 'Cannot mark as completed. Both Subjective and Objective assessments must be 100% complete.',
                     'subjective_complete' => $subjectiveComplete,
@@ -269,7 +277,7 @@ class AssessmentController extends Controller
 
         $activeSubscription = $user->activeSubscription;
 
-        if (!$activeSubscription) {
+        if (! $activeSubscription) {
             return; // No subscription, can't increment
         }
 
@@ -295,7 +303,8 @@ class AssessmentController extends Controller
     public function destroy(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->firstOrFail();
 
         $assessment->delete();
 
@@ -312,7 +321,8 @@ class AssessmentController extends Controller
     public function complete(Request $request, $id)
     {
         $assessment = Assessment::where('user_id', $request->user()->id)
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->firstOrFail();
 
         // Only allow completion if not already completed
         if ($assessment->status === 'completed') {
@@ -326,7 +336,7 @@ class AssessmentController extends Controller
         $subjectiveComplete = $assessment->subjective_completion_percentage >= 100;
         $objectiveComplete = $assessment->objective_completion_percentage >= 100;
 
-        if (!$subjectiveComplete || !$objectiveComplete) {
+        if (! $subjectiveComplete || ! $objectiveComplete) {
             return response()->json([
                 'message' => 'Assessment is not 100% complete. Both Subjective and Objective assessments must be completed.',
                 'subjective_complete' => $subjectiveComplete,

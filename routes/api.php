@@ -28,16 +28,18 @@ Route::prefix('physio')->group(function () {
             Route::get('/drafts', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'getDrafts']);
             Route::get('/all', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'getAll']);
             Route::post('/', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'store']);
+
+            // Unified Subjective assessment endpoint (must be before /{id} route)
+            Route::put('/subjective/section', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'updateSection']);
+
+            // Unified Objective assessment endpoint (must be before /{id} route)
+            Route::put('/objective/section', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'updateSection']);
+
+            // Parameterized routes (must be after specific routes)
             Route::get('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'show']);
             Route::put('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'update']);
             Route::post('/{id}/complete', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'complete']);
             Route::delete('/{id}', [App\Http\Controllers\Api\Physio\AssessmentController::class, 'destroy']);
-
-            // Unified Subjective assessment endpoint
-            Route::put('/subjective/section', [App\Http\Controllers\Api\Physio\SubjectiveAssessmentController::class, 'updateSection']);
-
-            // Unified Objective assessment endpoint
-            Route::put('/objective/section', [App\Http\Controllers\Api\Physio\ObjectiveAssessmentController::class, 'updateSection']);
         });
 
         // Subscription routes
