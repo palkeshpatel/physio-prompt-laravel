@@ -97,6 +97,7 @@ class Assessment extends Model
     public function getSectionData(string $sectionName): ?array
     {
         $columnName = $this->getColumnNameForSection($sectionName);
+
         return $this->$columnName;
     }
 
@@ -146,16 +147,26 @@ class Assessment extends Model
 
     /**
      * Calculate completion percentage from all sections
+     * Subjective: 12 sections = 100% (each section = 8.33%)
+     * Objective: 10 sections = 100% (each section = 10%)
+     * Overall: 100% only when both subjective and objective are 100%
      * Note: Does not save the model - call save() separately if needed
      */
     public function calculateCompletionPercentage(): void
     {
         $subjectivePercentage = $this->getSubjectivePercentage();
         $objectivePercentage = $this->getObjectivePercentage();
-        
+
         $this->subjective_completion_percentage = $subjectivePercentage;
         $this->objective_completion_percentage = $objectivePercentage;
-        $this->completion_percentage = ($subjectivePercentage + $objectivePercentage) / 2;
+
+        // Overall completion is 100% only when BOTH are 100%
+        if ($subjectivePercentage >= 100 && $objectivePercentage >= 100) {
+            $this->completion_percentage = 100;
+        } else {
+            // If either is not 100%, overall is the average
+            $this->completion_percentage = ($subjectivePercentage + $objectivePercentage) / 2;
+        }
     }
 
     /**

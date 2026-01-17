@@ -67,25 +67,26 @@ class AssessmentController extends Controller
 
     /**
      * Get all draft assessments (draft or in_progress)
-     * Returns list with completion percentages
+     * Returns list with completion percentages and patient information
      */
-    public function getDrafts(Request $request)
+    public function getDrafts(Request $request): \Illuminate\Http\JsonResponse
     {
         $userId = $request->user()->id;
 
         $drafts = Assessment::where('user_id', $userId)
             ->whereIn('status', ['draft', 'in_progress'])
+            ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
+            ->select('id', 'patient_name', 'age', 'patient_gender', 'completed_at', 'status')
             ->get()
             ->map(function ($assessment) {
                 return [
                     'id' => $assessment->id,
+                    'patient_name' => $assessment->patient_name ?? 'N/A',
+                    'age' => $assessment->age ?? null,
+                    'patient_gender' => $assessment->patient_gender ?? null,
+                    'completed_at' => $assessment->completed_at?->toIso8601String(),
                     'status' => $assessment->status,
-                    'created_at' => $assessment->created_at,
-                    'updated_at' => $assessment->updated_at,
-                    'subjective_percentage' => round($assessment->subjective_completion_percentage ?? 0, 2),
-                    'objective_percentage' => round($assessment->objective_completion_percentage ?? 0, 2),
-                    'overall_progress' => round($assessment->completion_percentage ?? 0, 2),
                 ];
             });
 
